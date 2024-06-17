@@ -1,0 +1,16 @@
+#attributes
+__imagePath = pygame.image.load("AT2/assets/goblin.png").convert_alpha()
+#end attributes
+
+#constructors
+def __init__(self, ):
+
+#accessors
+def getImagePath(self):
+  return self.__imagePath
+
+
+#mutators
+def setImagePath(self, newImagePath):
+  self.__imagePath = newImagePath
+

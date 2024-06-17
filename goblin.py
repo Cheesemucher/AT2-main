@@ -1,12 +1,25 @@
 import pygame
 import random
+from enemy import Enemy
 
-class Goblin:
-    def __init__(self, position, window):
+class Goblin(Enemy):
+    #attributes
+    __image = None
+    #end attributes
+
+    def __init__(self, position, window, defenseMultiplier, magicResistanceMultiplier):
+        super().__init__(position, window, defenseMultiplier, magicResistanceMultiplier)
         # Load the goblin image from the specified path
-        self.image = pygame.image.load("AT2/assets/goblin.png").convert_alpha()  # Ensure the image path is correct
-        self.position = position  # Store the initial position of the goblin
-        self.window = window  # Store the game window object
+        self.__image = 'image'
+        #theres no attributes for poor little goblin anymore because enemy took them all
+
+    #accessors
+    def getImagePath(self):
+        return self.__imagePath
+
+    #mutators
+    def setImagePath(self, newImagePath):
+        self.__imagePath = newImagePath
 
     def move(self):
         # Move the goblin randomly within a specified range

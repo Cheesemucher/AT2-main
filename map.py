@@ -6,6 +6,8 @@ from enemy import Enemy
 
 
 class Map:
+    
+
     def __init__(self, window):
         """
         Initialize the Map class.
@@ -64,8 +66,8 @@ class Map:
         Handle combat between the player and the current enemy.
         """
         if self.in_combat and self.current_enemy:
-            player_damage = random.randint(5, 10)
-            enemy_defeated = self.current_enemy.take_damage(player_damage)
+            player_damage = random.randint(5, 10) #get rid of this later
+            enemy_defeated = self.current_enemy.take_damage(player_damage) #get rid of this later also
             print(f"Player attacks! Deals {player_damage} damage to the enemy.")
             if enemy_defeated:
                 print("Enemy defeated!")
