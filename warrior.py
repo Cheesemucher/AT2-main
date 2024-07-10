@@ -1,23 +1,27 @@
 from character import Character
 
 class Warrior(Character):
-    __maxStamina = 100
+    #attributes
+    __maxStamina = None
     __currentStamina = None
-    __staminaRegeneration = 10
-    __strength = 15
-    __maxHP = None
-    __currentHP = None
-    __attacks = None
+    __staminaRegeneration = None
+    __strength = None
+    __defensiveStance = None
 
-    def __init__(self, name, maxHP):
-        super().__init__(name, "Warrior", armor=10)
+    __attacks = None
+    #end attributes
+
+    def __init__(self, name, defenseMultiplier, magicResistance, strength):
+        super().__init__(name, "Warrior", defenseMultiplier, magicResistance)
+        self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
-        self.__maxHP = maxHP
-        self.__currentHP = maxHP
+        self.__staminaRegeneration = 10
+        self.__strength = strength
+        self.__defensiveStance = False
         self.__attacks = {
-            "Basic Attack": {"method": self.basicAttack, "staminaCost": 10},
-            "Charge": {"method": self.charge, "staminaCost": 20},
-            "Cleave Attack": {"method": self.cleaveAttack, "staminaCost": 30},
+            "Slash": {"method": self.slash, "staminaCost": 10},
+            "Lunge": {"method": self.lunge, "staminaCost": 20},
+            "Cleave": {"method": self.cleave, "staminaCost": 30},
             "Shield Bash": {"method": self.shieldBash, "staminaCost": 15},
             "Defensive Stance": {"method": self.defensiveStance, "staminaCost": 5},
         }
@@ -35,11 +39,8 @@ class Warrior(Character):
     def getStrength(self):
         return self.__strength
 
-    def getMaxHP(self):
-        return self.__maxHP
-
-    def getCurrentHP(self):
-        return self.__currentHP
+    def getDefensiveStance(self):
+        return self.__defensiveStance
 
     def getAttacks(self):
         return self.__attacks
@@ -57,11 +58,8 @@ class Warrior(Character):
     def setStrength(self, strength):
         self.__strength = strength
 
-    def setMaxHP(self, maxHP):
-        self.__maxHP = maxHP
-
-    def setCurrentHP(self, currentHP):
-        self.__currentHP = currentHP
+    def setDefensiveStance(self, defensiveStanceStatus):
+        self.__defensiveStance = defensiveStanceStatus
 
     def setAttacks(self, attacks):
         self.__attacks = attacks
@@ -75,48 +73,90 @@ class Warrior(Character):
         chosenAttack = int(input("Enter the number of the attack: "))
         if 1 <= chosenAttack <= len(attackList):
             attack, attackInfo = attackList[chosenAttack - 1]
-            if self.__currentStamina >= attackInfo["staminaCost"]:
-                self.__currentStamina -= attackInfo["staminaCost"]
+            if self.getCurrentStamina() >= attackInfo["staminaCost"]:
+                remainingStamina = self.getCurrentStamina() - attackInfo["staminaCost"]
+                self.setCurrentStamina(remainingStamina)
                 attackMethod = attackInfo["method"]
                 attackMethod(target)
             else:
-                print("Not enough stamina for this attack.")
+                print(f"{self.getName()} got ready for a move, but was collapsed from exhaustion instead.")
         else:
             print("Invalid attack.")
 
-    def regenerateStamina(self):
-        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
+    def lunge(self, target):
 
-    def attack(self, target):
-        # Calculate damage based on warrior's level, strength, and any weapon modifiers
-        # For simplicity, let's assume the warrior's damage is directly proportional to their level
-        damage = self.__strength * self.level
-        target.takeDamage(damage)  # Apply damage to the target
-        return damage  # Return the amount of damage dealt
-
-    def charge(self, target):
-        print(f"{self.name} charges towards {target.name}!")
-        target.takeDamage(self.__strength)  # Example: Charge deals damage equal to the warrior's strength
-
-    def basicAttack(self, target):
-        damage = self.__strength * target.defenseMultiplier  # defense multiplier calculations were put in the skills damage calculations to more easily allow for defense shred
-        print(f"{self.name} performs a basic attack on {target} for {damage} damage!")
+        damage = self.getStrength() * 1.8 * target.getDefenseMultiplier()
+        print(f"{self.getName()} lunges at {target.getName()} for {damage} damage!")
         target.takeDamage(damage)
 
-    def cleaveAttack(self, targets):
+        print(f"{self.getName()}'s lunge has left him exposed.")
+        self.setExposedStatus(True)
+
+    def slash(self, target):
+
+        damage = self.__strength * target.getDefenseMultiplier()  # defense multiplier calculations were put in the skills damage calculations to more easily allow for defense shred
+        print(f"{self.getName()} slashes at {target.getName()} for {damage} damage!")
+        target.takeDamage(damage)
+
+    def cleave(self, target):
+
         totalDamage = 0
-        for target in targets:
-            damage = self.__strength * 2  # Example: Cleave attack deals double the warrior's strength to each target
-            totalDamage += damage
-            print(f"{self.name} cleaves {target} for {damage} damage!")
-            target.takeDamage(damage)
-        print(f"{self.name} dealt a total of {totalDamage} damage with cleave!")
+        #for target in targets:
+        damage = self.__strength + 10 * target.getDefenseMultiplier()
+        totalDamage += damage
+            #print(f"{self.name} cleaves {target} for {damage} damage!")
+            #target.takeDamage(damage)
+        print(f"{self.getName()} dealt a total of {totalDamage} damage with cleave!")
+        target.takeDamage(totalDamage)
 
     def shieldBash(self, target):
-        damage = self.__strength + 5  # Example: Shield bash deals warrior's strength plus 5 additional damage
-        print(f"{self.name} performs a shield bash on {target} for {damage} damage!")
+        if self.getDefensiveStance() == True:
+            print(f"{self.getName()}'s defensive stance enabled a more forceful shield bash!")
+            damage = (self.getStrength() + 100 - 100*self.getDefenseMultiplier()) * target.getDefenseMultiplier()
+        else:
+            damage = self.getStrength() * target.getDefenseMultiplier()
+        print(f"{self.getName()} shield bashes {target.getName()} for {damage} damage!")
         target.takeDamage(damage)
 
-    def defensiveStance(self):
-        self.armorClass += 5  # Example: Defensive stance increases armor class by 5
-        print(f"{self.name} enters a defensive stance, increasing armor class!")
+    def defensiveStance(self, target):
+        self.setDefensiveStance(True)
+        print(f"{self.getName()} takes a defensive stance, reducing incoming phyiscal damage.")
+        damage = target.getDefenseMultiplier() * 5
+        print(f"{target.getName()} is intimidated and takes {damage} damage!")
+        target.takeDamage(damage)
+
+
+    #turn based combat related behaviours
+    def takeDamage(self, amount):
+        if self.getDefensiveStance():
+            amount = max(amount - (100 - 100 * self.getDefenseMultiplier()), 0)
+            print(f"{self.getName()}'s defensive stance further reduced incoming damage to a total of {amount}!")
+
+        if self.getExposedStatus():
+            print(f"{self.getName()}'s exposed state rendered all armour inneffective.")
+            amount = amount/self.getDefenseMultiplier() #gets the true damage value to deal true damage
+
+        self.setCurrentHP(self.getCurrentHP() - amount)
+        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+    def upkeepPhase(self):
+        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
+        self.setExposedStatus(False) #stops being exposed upon next turn
+
+        if self.getCursedStatus()["status"]:
+            self.setCursedTimer(self.getCursedTimer() +1)
+            if self.getCursedTimer() >= self.getCursedStatus()["delay"]:
+                damage = self.getCursedStatus()["damage"]
+                
+                self.setCurrentHP(self.getCurrentHP() - damage)
+
+                print(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
+                self.setCursedTimer(0)
+                self.setCursedStatus(False, None, None)
+
+                print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+            else:
+                turnsLeft = self.getCursedStatus()["delay"] - self.getCursedTimer()
+                print(f"\nThe curse manifests in {turnsLeft} more turn(s)...\n")
+

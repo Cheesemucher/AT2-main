@@ -1,54 +1,75 @@
+from abc import ABC, abstractmethod
+
 class Character:
     #attributes
     MAX_LEVEL = 50  # Maximum level a character can reach
     ATTRIBUTE_POINTS_PER_LEVEL = 3  # Number of attribute points gained per level
     __name = None  # Character's name
+    __maxHP = None
+    __currentHP = None
     __character_class = None  # Character's class
-    __armor = None  # % of physical damage that will be dealt upon getting hit
-    __magicResistance = None # % of magic damage recieved upon hit
-    __level = 1  # Character's current level
-    __experience_points = 0  # Character's current experience points
-    __hit_points = 10  # Example starting value for character's hit points
+    __defenseMultiplier = None  # decimal multiplier representing % of physical damage that will be dealt upon getting hit
+    #not called defense because it is the damage that you DO take, not damage blocked
+    __magicResistance = None # decimal multiplier representing % of magic damage recieved upon hit
+    __exposed = None
+    __level = None  # Character's current level
+    __EXP = None  # Character's current experience points
     __skills = {}  # Example empty dictionary for character's skills
     __inventory = []  # Example empty list for character's inventory
-    __gold = 0  # Example starting value for character's gold
-    __attribute_points = 0  # Attribute points available to allocate
+    __gold = None  # Example starting value for character's gold
+    __attribute_points = None  # Attribute points available to allocate
+    __cursedStatus = None
+    __curseTimer = None # no. of turns that a curse needs to deal the damage
     #end attributes
 
     #constructors
     def __init__(self, name, characterclass, armor, magicResistance):
         self.__name = name
+        self.__level = 1
+        self.__EXP = 0
         self.__character_class = characterclass
-        self.__armor = armor
-        self.__magicResistance = magicResistance
+        self.__defenseMultiplier = armor/100
+        self.__magicResistance = magicResistance/100
+        self.__exposed = False
+        self.__maxHP = 100 + (self.__level * 20)
+        self.__currentHP = self.__maxHP
+        self.__gold = 0
+        self.__attribute_points = 0
+        self.__cursedStatus = {"status":None, #boolean cursed state flag
+                               "delay":None,  #turn count for timer to reach
+                               "damage":None} #damage taken when timer is reached
+        self.__curseTimer = 0
 
-    #accessors
+#accessors
     def getMAXLEVEL(self):
-        return self.__MAX_LEVEL
+        return self.MAX_LEVEL
 
     def getATTRIBUTEPOINTSPERLEVEL(self):
-        return self.__ATTRIBUTE_POINTS_PER_LEVEL
+        return self.ATTRIBUTE_POINTS_PER_LEVEL
 
     def getName(self):
         return self.__name
 
+    def getMaxHP(self):
+        return self.__maxHP
+
+    def getCurrentHP(self):
+        return self.__currentHP
+
     def getCharacterclass(self):
         return self.__character_class
 
-    def getArmor(self):
-        return self.__armor
+    def getDefenseMultiplier(self):
+        return self.__defenseMultiplier
+
+    def getMagicResistance(self):
+        return self.__magicResistance
 
     def getLevel(self):
         return self.__level
 
-    def getExperiencepoints(self):
-        return self.__experience_points
-
-    def getHitpoints(self):
-        return self.__hit_points
-
-    def getArmorclass(self):
-        return self.__armor_class
+    def getEXP(self):
+        return self.__EXP
 
     def getSkills(self):
         return self.__skills
@@ -62,36 +83,46 @@ class Character:
     def getAttributepoints(self):
         return self.__attribute_points
     
-    def getMagicResistance(self):
-        return self.__magicResistance
+    def getExposedStatus(self):
+        return self.__exposed
+    
+    def getCursedStatus(self):
+        return self.__cursedStatus
+    
+    def getCursedTimer(self):
+        return self.__curseTimer
+
 
     #mutators
     def setMAXLEVEL(self, newMAXLEVEL):
-        self.__MAX_LEVEL = newMAXLEVEL
+        self.MAX_LEVEL = newMAXLEVEL
 
     def setATTRIBUTEPOINTSPERLEVEL(self, newATTRIBUTEPOINTSPERLEVEL):
-        self.__ATTRIBUTE_POINTS_PER_LEVEL = newATTRIBUTEPOINTSPERLEVEL
+        self.ATTRIBUTE_POINTS_PER_LEVEL = newATTRIBUTEPOINTSPERLEVEL
 
     def setName(self, newName):
         self.__name = newName
 
+    def setMaxHP(self, newMaxHP):
+        self.__maxHP = newMaxHP
+
+    def setCurrentHP(self, newCurrentHP):
+        self.__currentHP = newCurrentHP
+
     def setCharacterclass(self, newCharacterclass):
         self.__character_class = newCharacterclass
 
-    def setArmor(self, newArmor):
-        self.__armor = newArmor
+    def setDefenseMultiplier(self, newDefenseMultiplier):
+        self.__defenseMultiplier = newDefenseMultiplier
+
+    def setMagicResistance(self, newMagicResistance):
+        self.__magicResistance = newMagicResistance
 
     def setLevel(self, newLevel):
         self.__level = newLevel
 
-    def setExperiencepoints(self, newExperiencepoints):
-        self.__experience_points = newExperiencepoints
-
-    def setHitpoints(self, newHitpoints):
-        self.__hit_points = newHitpoints
-
-    def setMagicResistance(self, newMR):
-        self.__magicResistance = newMR
+    def setEXP(self, newEXP):
+        self.__EXP = newEXP
 
     def setSkills(self, newSkills):
         self.__skills = newSkills
@@ -104,6 +135,17 @@ class Character:
 
     def setAttributepoints(self, newAttributepoints):
         self.__attribute_points = newAttributepoints
+
+    def setExposedStatus(self, newExposedStatus):
+        self.__exposed = newExposedStatus
+
+    def setCursedStatus(self, status, delay, damage):
+        self.__cursedStatus["damage"] = damage
+        self.__cursedStatus["delay"] = delay
+        self.__cursedStatus["status"] = status
+
+    def setCursedTimer(self, newTimer):
+        self.__curseTimer = newTimer
 
     #behaviours
     def assign_attribute_points(self, attribute, points):
@@ -133,14 +175,15 @@ class Character:
         # Example exponential scaling: Each level requires 100 more experience points than the previous level
         return int(100 * (1.5 ** (level - 1)))
 
-    def is_alive(self):
-        return self.__hit_points > 0
+    def isAlive(self):
+        return self.getCurrentHP() > 0
 
-    def take_damage(self, amount):
-        # Calculate the actual damage taken, taking into account the character's armor
-        actual_damage = max(0, amount - self.__armor)
-        self.__hit_points -= actual_damage
-        if self.__hit_points <= 0:
-            print(f"{self.__name} takes {actual_damage} damage and has been defeated!")
-        else:
-            print(f"{self.__name} takes {actual_damage} damage. Remaining hit points: {self.__hit_points}")
+    @abstractmethod 
+    def takeDamage(self, amount):
+        pass
+
+    @abstractmethod
+    def upkeepPhase(self):
+        pass
+
+

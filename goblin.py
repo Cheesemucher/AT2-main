@@ -4,22 +4,72 @@ from enemy import Enemy
 
 class Goblin(Enemy):
     #attributes
-    __image = None
+    __attackList = None
+    __previousAttack = None
     #end attributes
 
-    def __init__(self, position, window, defenseMultiplier, magicResistanceMultiplier):
-        super().__init__(position, window, defenseMultiplier, magicResistanceMultiplier)
+    def __init__(self, defenseMultiplier, magicResistanceMultiplier, strength, magicPower): 
+        super().__init__("Goblin", "image", defenseMultiplier, magicResistanceMultiplier, strength, magicPower)
         # Load the goblin image from the specified path
-        self.__image = 'image'
-        #theres no attributes for poor little goblin anymore because enemy took them all
+        self.__attackList = {
+            "Stab" : self.stab,
+            "Claw" : self.claw,
+            "Bite" : self.bite
+        }
 
     #accessors
-    def getImagePath(self):
-        return self.__imagePath
+    def getImage(self):
+        return self.__image
+
+    def getAttackList(self):
+        return self.__attackList
+
+    def getPreviousAttack(self):
+        return self.__previousAttack
+
 
     #mutators
-    def setImagePath(self, newImagePath):
-        self.__imagePath = newImagePath
+    def setImage(self, newImage):
+        self.__image = newImage
+
+    def setAttackList(self, newAttackList):
+        self.__attackList = newAttackList
+
+    def setPreviousAttack(self, newPreviousAttack):
+        self.__previousAttack = newPreviousAttack
+
+
+    #behaviours
+
+    def attack(self, target):
+        if self.getPreviousAttack() != "Stab" and random.randint(0,5) != 0: #just to throw in some probability so it doesnt do stab every second turn
+            selectedAttack = "Stab"
+        else:
+            attackRoll = random.randint(0, 100)
+            if 0 < attackRoll <= 55:
+                selectedAttack = "Claw"
+            elif 55 <= 90:
+                selectedAttack = "Bite"
+            else:
+                selectedAttack = "Stab"
+
+        self.__attackList[selectedAttack](target)
+        self.setPreviousAttack(selectedAttack)
+
+    def stab(self, player):
+        damage = (self.getStrength() + 10) * player.getDefenseMultiplier()
+        print(f"{self.getName()} stabs {player.getName()} for {damage} damage! \n")
+        player.takeDamage(damage)
+
+    def bite(self, player):
+        damage = (self.getStrength() * 1.1) * player.getDefenseMultiplier()
+        print(f"{self.getName()} bites {player.getName()} for {damage} damage! \n")
+        player.takeDamage(damage)
+
+    def claw(self, player):
+        damage = (self.getStrength() - 10) * player.getDefenseMultiplier()
+        print(f"{self.getName()} claws {player.getName()} for {damage} damage! \n")
+        player.takeDamage(damage)
 
     def move(self):
         # Move the goblin randomly within a specified range
@@ -33,3 +83,7 @@ class Goblin(Enemy):
     def draw(self):
         # Draw the goblin on the game window
         self.window.blit(self.image, self.position)
+    
+    def takeDamage(self, damage):
+        self.setCurrentHP(self.getCurrentHP() - damage)
+        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")

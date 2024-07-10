@@ -1,16 +1,32 @@
 #attributes
-__imagePath = pygame.image.load("AT2/assets/goblin.png").convert_alpha()
+__attackList = None
+__previousAttack = None
+__image = pygame.image.load("AT2/assets/skeleton.png").convert_alpha()
 #end attributes
 
 #constructors
-def __init__(self, ):
+def __init__(self, attackList, previousAttack, ):
+    self.__attackList = attackList
+    self.__previousAttack = previousAttack
 
 #accessors
-def getImagePath(self):
-  return self.__imagePath
+    def getAttackList(self):
+        return self.__attackList
+
+    def getPreviousAttack(self):
+        return self.__previousAttack
+
+    def getImage(self):
+        return self.__image
 
 
 #mutators
-def setImagePath(self, newImagePath):
-  self.__imagePath = newImagePath
+    def setAttackList(self, newAttackList):
+        self.__attackList = newAttackList
+
+    def setPreviousAttack(self, newPreviousAttack):
+        self.__previousAttack = newPreviousAttack
+
+    def setImage(self, newImage):
+        self.__image = newImage
 

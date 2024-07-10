@@ -58,8 +58,8 @@ def createConstructors(attributeList) -> list:
 
 def createAccessors(attribute) -> str:
     attributeName = attribute.replace('_', '') #gets purely the attribute name
-    firstLine = "def get" + attributeName[0].upper() + attributeName[1:] + "(self):"
-    secondLine = "  return self." + attribute
+    firstLine = "    def get" + attributeName[0].upper() + attributeName[1:] + "(self):"
+    secondLine = "        return self." + attribute
     accessor = [firstLine, secondLine]
     
     return accessor
@@ -68,8 +68,8 @@ def createAccessors(attribute) -> str:
 def createMutators(attribute):
     attributeName = attribute.replace('_', '') #gets purely the attribute name
     attributeWithCapitalFirstLetter = attributeName[0].upper() + attributeName[1:] #gets the attribute but with a capital first letter
-    firstLine = "def set" + attributeWithCapitalFirstLetter + "(self, new" + attributeWithCapitalFirstLetter + "):"
-    secondLine = "  self." + attribute + " = new" + attributeWithCapitalFirstLetter
+    firstLine = "    def set" + attributeWithCapitalFirstLetter + "(self, new" + attributeWithCapitalFirstLetter + "):"
+    secondLine = "        self." + attribute + " = new" + attributeWithCapitalFirstLetter
     mutator = [firstLine, secondLine]
     
     return mutator
@@ -80,7 +80,7 @@ accessorFunctions = map(createAccessors, attributeList)
 mutatorFunctions = map(createMutators, attributeList)
 constructorFunctions = createConstructors(attributesToBeConstructed)
 
-newCodeList = rawCodeList[:(attributesEnd+1)] + [''] + ['#constructors'] + constructorFunctions + [''] + ['#accessors']
+newCodeList = rawCodeList[:(attributesEnd+1)] + [''] + ['    #constructors'] + constructorFunctions + [''] + ['    #accessors']
 
 for accessor in accessorFunctions:
     line1, line2 = accessor
