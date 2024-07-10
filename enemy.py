@@ -18,7 +18,7 @@ class Enemy:
 
 
     #constructors
-    def __init__(self, name, image, defenseMultiplier, magicResistanceMultiplier, strength, magicPower):
+    def __init__(self, name, position, image, defenseMultiplier, magicResistanceMultiplier, strength, magicPower):
         # Load the enemy image from the specified image path
         #self.__image = pygame.image.load(imagePath).convert_alpha()
 
@@ -29,6 +29,8 @@ class Enemy:
         #self.__position = position
 
         #self.__window = window
+        self.__position = position
+        self.__image = image
         self.__name = name
         self.__defenseMultiplier = defenseMultiplier/100
         self.__magicResistanceMultiplier = magicResistanceMultiplier/100

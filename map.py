@@ -3,6 +3,8 @@ import random
 import pygame
 from assets import GAME_ASSETS
 from enemy import Enemy
+from goblin import Goblin
+from skeleton import Skeleton
 
 
 class Map:
@@ -26,10 +28,9 @@ class Map:
         self.player_type = None
         self.player_position = [self.window.get_width() / 2, self.window.get_height() / 2]
         self.enemies = [
-            Enemy(GAME_ASSETS["goblin"], [50, 50], self.window),
-            Enemy(GAME_ASSETS["orc"], [self.window.get_width() - 120, 50], self.window),
-            Enemy(GAME_ASSETS["skeleton"], [50, self.window.get_height() - 120], self.window),
-            Enemy(GAME_ASSETS["skeleton"], [self.window.get_width() - 120, self.window.get_height() - 120], self.window)
+            #Enemy(GAME_ASSETS["goblin"], [50, 50], self.window),
+            Goblin([50,50], self.window),
+            Skeleton([self.window.get_width() - 120, 50], self.window)
         ]
         self.in_combat = False  # Ensure this attribute is defined in the constructor
         self.current_enemy = None

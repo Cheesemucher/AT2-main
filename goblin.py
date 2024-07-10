@@ -1,5 +1,6 @@
 import pygame
 import random
+from assets import GAME_ASSETS
 from enemy import Enemy
 
 class Goblin(Enemy):
@@ -8,8 +9,8 @@ class Goblin(Enemy):
     __previousAttack = None
     #end attributes
 
-    def __init__(self, defenseMultiplier, magicResistanceMultiplier, strength, magicPower): 
-        super().__init__("Goblin", "image", defenseMultiplier, magicResistanceMultiplier, strength, magicPower)
+    def __init__(self, position, window): 
+        super().__init__(GAME_ASSETS["goblin"], position, window, pygame.image.load("AT2/assets/goblin.png").convert_alpha(), 80, 95, 60, None)
         # Load the goblin image from the specified path
         self.__attackList = {
             "Stab" : self.stab,

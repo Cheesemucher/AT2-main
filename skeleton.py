@@ -9,8 +9,8 @@ class Skeleton(Enemy):
     #__image = pygame.image.load("AT2/assets/skeleton.png").convert_alpha()
     #end attributes
 
-    def __init__(self, defenseMultiplier, magicResistanceMultiplier, strength, magicPower):
-        super().__init__("Skeleton", "image", defenseMultiplier, magicResistanceMultiplier, strength, magicPower) 
+    def __init__(self, position, window):
+        super().__init__("Skeleton", position, window, pygame.image.load("AT2/assets/skeleton.png").convert_alpha(), 80, 90, 50, 50) 
         
         self.__attackList = {
             "Punch" : self.punch,

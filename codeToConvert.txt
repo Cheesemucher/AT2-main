@@ -1,32 +1,62 @@
+from character import Character
+import pygame, sys
+
+class healthBar():
 #attributes
-__attackList = None
-__previousAttack = None
-__image = pygame.image.load("AT2/assets/skeleton.png").convert_alpha()
+currentHP = None
+maxHP = None
+barLength = None
+maxtolengthRatio = None
 #end attributes
 
-#constructors
-def __init__(self, attackList, previousAttack, ):
-    self.__attackList = attackList
-    self.__previousAttack = previousAttack
+    #constructors
+def __init__(self, currentHP, maxHP, barLength, maxtolengthRatio, ):
+    self.currentHP = currentHP
+    self.maxHP = maxHP
+    self.barLength = barLength
+    self.maxtolengthRatio = maxtolengthRatio
 
-#accessors
-    def getAttackList(self):
-        return self.__attackList
+    #accessors
+    def getCurrentHP(self):
+        return self.currentHP
 
-    def getPreviousAttack(self):
-        return self.__previousAttack
+    def getMaxHP(self):
+        return self.maxHP
 
-    def getImage(self):
-        return self.__image
+    def getBarLength(self):
+        return self.barLength
+
+    def getMaxtolengthRatio(self):
+        return self.maxtolengthRatio
 
 
 #mutators
-    def setAttackList(self, newAttackList):
-        self.__attackList = newAttackList
+    def setCurrentHP(self, newCurrentHP):
+        self.currentHP = newCurrentHP
 
-    def setPreviousAttack(self, newPreviousAttack):
-        self.__previousAttack = newPreviousAttack
+    def setMaxHP(self, newMaxHP):
+        self.maxHP = newMaxHP
 
-    def setImage(self, newImage):
-        self.__image = newImage
+    def setBarLength(self, newBarLength):
+        self.barLength = newBarLength
 
+    def setMaxtolengthRatio(self, newMaxtolengthRatio):
+        self.maxtolengthRatio = newMaxtolengthRatio
+
+
+def __init__(self):
+self.maxHP = Character.getMaxHP()
+self.currentHP = Character.getCurrentHP()
+self.barLength = 400
+self.maxtolengthRatio = self.maxHP / self.barLength
+
+
+
+
+
+
+#def loseHP(self, amount):
+#  if self.curren
+
+def healthBar(self):
+pygame.draw.rect(screen, (255,0,0),(10,10,self.currentHP,25))

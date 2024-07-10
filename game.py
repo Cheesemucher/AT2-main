@@ -15,6 +15,12 @@ class Game:
         self.state = 'menu'  # Set the initial state to 'menu'
         self.current_character = None  # To store the chosen character
 
+    #accessors
+    def get_window(self):
+        return self.window
+    
+
+    #run game function
     def run(self):
         while True:
             if self.state == 'menu':  # If the state is 'menu'
