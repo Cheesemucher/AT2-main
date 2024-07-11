@@ -1,62 +1,35 @@
-from character import Character
-import pygame, sys
-
-class healthBar():
 #attributes
-currentHP = None
-maxHP = None
-barLength = None
-maxtolengthRatio = None
+__enemy = None
+__player_class = None
+__player = None
 #end attributes
 
     #constructors
-def __init__(self, currentHP, maxHP, barLength, maxtolengthRatio, ):
-    self.currentHP = currentHP
-    self.maxHP = maxHP
-    self.barLength = barLength
-    self.maxtolengthRatio = maxtolengthRatio
+def __init__(self, enemy, playerclass, player, ):
+    self.__enemy = enemy
+    self.__player_class = playerclass
+    self.__player = player
 
     #accessors
-    def getCurrentHP(self):
-        return self.currentHP
+    def getEnemy(self):
+        return self.__enemy
 
-    def getMaxHP(self):
-        return self.maxHP
+    def getPlayerclass(self):
+        return self.__player_class
 
-    def getBarLength(self):
-        return self.barLength
-
-    def getMaxtolengthRatio(self):
-        return self.maxtolengthRatio
+    def getPlayer(self):
+        return self.__player
 
 
 #mutators
-    def setCurrentHP(self, newCurrentHP):
-        self.currentHP = newCurrentHP
+    def setEnemy(self, newEnemy):
+        self.__enemy = newEnemy
 
-    def setMaxHP(self, newMaxHP):
-        self.maxHP = newMaxHP
+    def setPlayerclass(self, newPlayerclass):
+        self.__player_class = newPlayerclass
 
-    def setBarLength(self, newBarLength):
-        self.barLength = newBarLength
-
-    def setMaxtolengthRatio(self, newMaxtolengthRatio):
-        self.maxtolengthRatio = newMaxtolengthRatio
-
-
-def __init__(self):
-self.maxHP = Character.getMaxHP()
-self.currentHP = Character.getCurrentHP()
-self.barLength = 400
-self.maxtolengthRatio = self.maxHP / self.barLength
+    def setPlayer(self, newPlayer):
+        self.__player = newPlayer
 
 
 
-
-
-
-#def loseHP(self, amount):
-#  if self.curren
-
-def healthBar(self):
-pygame.draw.rect(screen, (255,0,0),(10,10,self.currentHP,25))

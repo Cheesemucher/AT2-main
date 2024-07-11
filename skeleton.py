@@ -1,90 +1,78 @@
-from enemy import Enemy
 import pygame
 import random
+from enemy import Enemy
+from assets import GAME_ASSETS
 
 class Skeleton(Enemy):
-    #attributes
+    # attributes
     __attackList = None
     __previousAttack = None
-    #__image = pygame.image.load("AT2/assets/skeleton.png").convert_alpha()
-    #end attributes
+
+    # end attributes
 
     def __init__(self, position, window):
-        super().__init__("Skeleton", position, window, pygame.image.load("AT2/assets/skeleton.png").convert_alpha(), 80, 90, 50, 50) 
-        
+        super().__init__("Skeleton", GAME_ASSETS['skeleton'], position, window, 80, 90, 50, 50)
+        self.setImage(pygame.image.load(GAME_ASSETS['skeleton']).convert_alpha())
         self.__attackList = {
-            "Punch" : self.punch,
-            "Death Bolt" : self.deathBolt,
-            "Curse" : self.curse
+            "Punch": self.punch,
+            "Death Bolt": self.deathBolt,
+            "Curse": self.curse
         }
 
-        #self.position = position  # Store the initial position of the skeleton
-        #self.window = window  # Store the window object where the skeleton will be drawn
-
-
-    #accessors
+    # accessors
     def getAttackList(self):
         return self.__attackList
 
     def getPreviousAttack(self):
         return self.__previousAttack
 
-    def getImage(self):
-        return self.__image
-
-
-    #mutators
+    # mutators
     def setAttackList(self, newAttackList):
         self.__attackList = newAttackList
 
     def setPreviousAttack(self, newPreviousAttack):
         self.__previousAttack = newPreviousAttack
 
-    def setImage(self, newImage):
-        self.__image = newImage
-
-
-
-
-    #behaviours
-
+    # behaviours
     def move(self):
+        position = self.getPosition()
+        window = self.getWindow()
+        image = self.getImage()
+        
         # Move the skeleton randomly within a specified range
-        self.position[0] += random.randint(-15, 15)  # Move horizontally
-        self.position[1] += random.randint(-15, 15)  # Move vertically
+        position[0] += random.randint(-15, 15)  # Move horizontally
+        position[1] += random.randint(-15, 15)  # Move vertically
 
         # Ensure the skeleton stays within the bounds of the window
-        self.position[0] = max(0, min(self.window.get_width() - self.image.get_width(), self.position[0]))  # Limit horizontal movement
-        self.position[1] = max(0, min(self.window.get_height() - self.image.get_height(), self.position[1]))  # Limit vertical movement
+        position[0] = max(0, min(window.get_width() - image.get_width(), position[0]))  # Limit horizontal movement
+        position[1] = max(0, min(window.get_height() - image.get_height(), position[1]))  # Limit vertical movement
+        self.setPosition(position)
 
     def draw(self):
         # Draw the skeleton image on the window at the current position
-        self.window.blit(self.image, self.position)
+        self.getWindow().blit(self.getImage(), self.getPosition())
 
-            
     def attack(self, target):
-        
         attackRoll = random.randint(0, 100)
 
         if 0 < attackRoll <= 60:
             selectedAttack = "Punch"
-        elif 60 < attackRoll <= 70 and self.getPreviousAttack() == "Punch" and target.getCursedStatus()["status"] == False:
+        elif 60 < attackRoll <= 70 and self.getPreviousAttack() == "Punch" and not target.getCursedStatus()["status"]:
             selectedAttack = "Curse"
         else:
             selectedAttack = "Death Bolt"
 
-        #self.getAttackList()[selectedAttack](target)
-        self.curse(target)
+        self.__attackList[selectedAttack](target)
         self.setPreviousAttack(selectedAttack)
 
-    #attacks
+    # attacks
     def punch(self, player):
         damage = (self.getStrength() + 10) * player.getDefenseMultiplier()
         print(f"{self.getName()} punches {player.getName()} for {damage} damage! \n")
         player.takeDamage(damage)
 
     def deathBolt(self, player):
-        damage = (self.getMagicPower() + 30) * player.getMagicResistnce()
+        damage = (self.getMagicPower() + 30) * player.getMagicResistance()
         print(f"{self.getName()} fires a death bolt at {player.getName()} for {damage} damage! \n")
         player.takeDamage(damage)
 
@@ -92,7 +80,6 @@ class Skeleton(Enemy):
         damage = self.getMagicPower()
         turnDelay = 2
         player.setCursedStatus(True, turnDelay, damage)
-
         print(f"{self.getName()} lays a curse upon {player.getName()} for {turnDelay} turns!")
 
     def takeDamage(self, damage):

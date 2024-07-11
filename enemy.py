@@ -18,17 +18,14 @@ class Enemy:
 
 
     #constructors
-    def __init__(self, name, position, image, defenseMultiplier, magicResistanceMultiplier, strength, magicPower):
+    def __init__(self, name, image, position, window, defenseMultiplier, magicResistanceMultiplier, strength, magicPower):
         # Load the enemy image from the specified image path
         #self.__image = pygame.image.load(imagePath).convert_alpha()
 
         # Scale the enemy image to 0.75 times the original size
         #self.__image = pygame.transform.scale(self.__image, (int(self.__image.get_width() * 0.75), int(self.__image.get_height() * 0.75)))
-        
-        # Set the initial position of the enemy
-        #self.__position = position
 
-        #self.__window = window
+        self.__window = window
         self.__position = position
         self.__image = image
         self.__name = name

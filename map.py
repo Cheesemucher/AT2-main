@@ -2,6 +2,7 @@ import random
 
 import pygame
 from assets import GAME_ASSETS
+from combat import Combat
 from enemy import Enemy
 from goblin import Goblin
 from skeleton import Skeleton
@@ -56,7 +57,7 @@ class Map:
             bool: True if the player is in combat, False otherwise.
         """
         for enemy in self.enemies:
-            if pygame.math.Vector2(enemy.position).distance_to(self.player_position) < 50:
+            if pygame.math.Vector2(enemy.getPosition()).distance_to(self.player_position) < 50:
                 self.in_combat = True
                 self.current_enemy = enemy
                 return True
@@ -67,8 +68,10 @@ class Map:
         Handle combat between the player and the current enemy.
         """
         if self.in_combat and self.current_enemy:
-            player_damage = random.randint(5, 10) #get rid of this later
-            enemy_defeated = self.current_enemy.take_damage(player_damage) #get rid of this later also
+            #need to actually initialise a player with a name
+
+            enemy = self.current_enemy
+
             print(f"Player attacks! Deals {player_damage} damage to the enemy.")
             if enemy_defeated:
                 print("Enemy defeated!")

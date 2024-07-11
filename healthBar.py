@@ -44,11 +44,6 @@ class healthBar():
         self.__maxtolengthRatio = newMaxtolengthRatio
 
 
-
-
-    #def loseHP(self, amount):
-      #  if self.curren
-
     def healthBar(self):
         pygame.draw.rect(Game.get_window(), (255,0,0),(10,10,self.getCurrentHP()/self.getMaxtolengthRatio(),25))
         pygame.draw.rect(Game.get_window(), (255,255,255), (10,10,self.getBarLength,25), 4)
