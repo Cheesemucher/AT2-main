@@ -12,10 +12,10 @@ class Mage(Character):
     # end attributes
 
     # constructors
-    def __init__(self, name, defense, magicResistance, magicPower):
-        super().__init__(name, "Mage", defense, magicResistance)
+    def __init__(self, name):
+        super().__init__(name, "Mage", 90, 80)
         self.__maxMana = 100
-        self.__magicPower = magicPower
+        self.__magicPower = 50
         self.__currentMana = self.__maxMana
         self.__manaRegen = 10
         self.__manaStability = 100  # should be percentage

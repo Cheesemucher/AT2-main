@@ -33,7 +33,7 @@ class CharacterSelect:
         self.characters = {
             "Warrior": pygame.image.load(GAME_ASSETS['warrior_button']).convert_alpha(),
             "Mage": pygame.image.load(GAME_ASSETS['mage_button']).convert_alpha(),
-            "Rogue": pygame.image.load(GAME_ASSETS['rogue_button']).convert_alpha()
+            "Ninja": pygame.image.load(GAME_ASSETS['ninja_button']).convert_alpha()
         }
         self.character_buttons = self.setup_character_buttons()
         self.back_button = pygame.Rect(50, self.window.get_height() - 50 - 30, 100, 30)  # Positioned at bottom left

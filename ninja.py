@@ -14,12 +14,12 @@ class Ninja(Character):
     __attacks = None
     #end attributes
 
-    def __init__(self, name, defenseMultiplier, magicResistance, strength):
-        super().__init__(name, "Ninja", defenseMultiplier, magicResistance)
+    def __init__(self, name):
+        super().__init__(name, "Ninja", 90, 100)
         self.__maxStamina = 100 + (2 * self.getLevel())
         self.__currentStamina = self.__maxStamina
         self.__staminaRegeneration = 10
-        self.__strength = strength
+        self.__strength = 45
         self.__dodgeChance = 30 # % chance to dodge attacks
         self.__critChance = 20 # % chance to crit
         self.__concealed = False

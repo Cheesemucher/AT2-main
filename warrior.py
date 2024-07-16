@@ -11,12 +11,12 @@ class Warrior(Character):
     __attacks = None
     #end attributes
 
-    def __init__(self, name, defenseMultiplier, magicResistance, strength):
-        super().__init__(name, "Warrior", defenseMultiplier, magicResistance)
+    def __init__(self, name):
+        super().__init__(name, "Warrior", 60, 80)
         self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
         self.__staminaRegeneration = 10
-        self.__strength = strength
+        self.__strength = 50
         self.__defensiveStance = False
         self.__attacks = {
             "Slash": {"method": self.slash, "staminaCost": 10},
@@ -84,13 +84,16 @@ class Warrior(Character):
             print("Invalid attack.")
 
     def lunge(self, target):
+        output = []
 
         damage = self.getStrength() * 1.8 * target.getDefenseMultiplier()
-        print(f"{self.getName()} lunges at {target.getName()} for {damage} damage!")
+        output.append(f"{self.getName()} lunges at {target.getName()} for {damage} damage!")
         target.takeDamage(damage)
 
-        print(f"{self.getName()}'s lunge has left him exposed.")
+        output.append(f"{self.getName()}'s lunge has left him exposed.")
         self.setExposedStatus(True)
+
+        return output
 
     def slash(self, target):
 

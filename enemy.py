@@ -27,7 +27,7 @@ class Enemy:
 
         self.__window = window
         self.__position = position
-        self.__image = image
+        self.__image = pygame.image.load(image).convert_alpha()
         self.__name = name
         self.__defenseMultiplier = defenseMultiplier/100
         self.__magicResistanceMultiplier = magicResistanceMultiplier/100
@@ -109,6 +109,7 @@ class Enemy:
         # Reduce the enemy's health by the specified damage amount
         pass
 
+    @abstractmethod
     def draw(self):
         # Adjust the position to ensure the image does not overflow the window boundaries
         adjustedPosition = [

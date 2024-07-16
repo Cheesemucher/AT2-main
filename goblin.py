@@ -13,7 +13,7 @@ class Goblin(Enemy):
     def __init__(self, position, window):
         super().__init__('Goblin', GAME_ASSETS['goblin'], position, window, 80, 95, 60, None)
         # Load the goblin image from the specified path
-        self.setImage(pygame.image.load(GAME_ASSETS['goblin']).convert_alpha())
+        self.setImage(pygame.transform.scale(self.getImage(), [40,30]))
         self.__attackList = {
             "Stab": self.stab,
             "Claw": self.claw,
@@ -79,9 +79,17 @@ class Goblin(Enemy):
         position[1] = max(0, min(window.get_height() - image.get_height(), position[1]))  # Clamp the y-coordinate
         self.setPosition(position)
 
-    def draw(self):
-        # Draw the goblin on the game window
-        self.getWindow().blit(self.getImage(), self.getPosition())
+    def draw(self, newPosition, scaleFactor):
+        # Draw the skeleton image on the window at the current position
+
+        if newPosition: # check if a different position is specified for the skeleton to be drawn at
+            position = newPosition # use the new position instead.
+        else:
+            position = self.getPosition() # if no new position is given, it uses its current position instead
+
+        image = pygame.transform.scale(self.getImage(), (self.getImage().get_width() * scaleFactor, self.getImage().get_height() * scaleFactor)) # Resizes the image to be drawn based on the scale factor
+
+        self.getWindow().blit(image, position)
 
     def takeDamage(self, damage):
         self.setCurrentHP(self.getCurrentHP() - damage)
