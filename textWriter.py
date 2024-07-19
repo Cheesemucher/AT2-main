@@ -73,7 +73,7 @@ class TextRenderer:
             self.__window.blit(word_surface, (x, y))
             x += word_width + space_width
 
-        self.__current_line += 1  # Move to the next line for the next call
+        self.__current_line += 2  # Move to down 2 lines for the next event
 
     def display_output(self, output):
         for event in output:
