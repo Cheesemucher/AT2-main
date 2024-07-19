@@ -1,4 +1,5 @@
 from character import Character
+from textWriter import TextRenderer
 
 class Warrior(Character):
     # Attributes
@@ -63,17 +64,24 @@ class Warrior(Character):
     def setAttacks(self, attacks):
         self.__attacks = attacks
 
-    # Behaviors
-    def chooseAttack(self, target):
-        output = []
+    # behaviors
+    def listAttacks(self, window, attackMenuArea, fontSize):
+        attack_writer = TextRenderer(window, attackMenuArea, fontSize) 
 
-        print(f"Choose an attack (Current stamina: {self.__currentStamina}):")
+        attack_list = ["Attack List:"]
+        
         attackList = list(self.__attacks.items())
-        for i, (attack, info) in enumerate(attackList):
-            print(f"{i + 1}. {attack} (Stamina cost: {info['staminaCost']})")
-        chosenAttack = int(input("Enter the number of the attack: "))
-        if 1 <= chosenAttack <= len(attackList):
-            attack, attackInfo = attackList[chosenAttack - 1]
+        for i, (attack, info) in enumerate(attackList): # Displays all attack info within the space outlined in the parameters
+            attack_list.append(f"{i + 1}. {attack} (Stamina cost: {info['staminaCost']})")
+        
+        attack_writer.display_output(attack_list)
+
+    def attack(self, target, chosen_attack):
+        output = []
+        
+        attackList = list(self.__attacks.items())
+        if 1 <= chosen_attack <= len(attackList):
+            attack, attackInfo = attackList[chosen_attack - 1]
             if self.getCurrentStamina() >= attackInfo["staminaCost"]:
                 remainingStamina = self.getCurrentStamina() - attackInfo["staminaCost"]
                 self.setCurrentStamina(remainingStamina)
@@ -85,7 +93,7 @@ class Warrior(Character):
         else:
             output.append("Invalid attack.")
 
-        return output
+        return output #used the output to be returned here instead of returning the single events as a list is expected by the textWriter class anyway
 
     def lunge(self, target):
         output = []

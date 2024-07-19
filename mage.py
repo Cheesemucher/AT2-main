@@ -1,4 +1,5 @@
 from character import Character
+from textWriter import TextRenderer
 
 class Mage(Character):
 
@@ -60,30 +61,36 @@ class Mage(Character):
         self.__manaStability = newManaStability
 
     # behaviours
-    def chooseAttack(self, target):
-        self.setExposedStatus(False)
-        output = []
+    def listAttacks(self, window, attackMenuArea, fontSize):
+        attack_writer = TextRenderer(window, attackMenuArea, fontSize) 
 
-        attackSelected = False
-        while not attackSelected:
-            print(f"Choose an attack (Current mana: {self.__currentMana}):")
-            attackList = list(self.__attacks.items())
-            for i, (attack, info) in enumerate(attackList):
-                print(f"{i + 1}. {attack} (Mana cost: {info['manaCost']})")
-            chosenAttack = int(input("Enter the number of the attack: "))  # change this to a key press later
-            if 1 <= chosenAttack <= len(attackList):
-                attack, attackInfo = attackList[chosenAttack - 1]
-                if attack == 'Really Big Beam' or self.__currentMana >= attackInfo["manaCost"]:
-                    print()
-                    attackMethod = attackInfo["method"]
-                    attackOutput = attackMethod(target)
-                    output.extend(attackOutput)
-                    attackSelected = True
-                else:
-                    output.append(f"A lack of necessary mana for this attack resulted in {self.getName()} collapsing from spell backlash instead.")
-            else:
-                output.append("\nInvalid attack.\n")
+        attack_list = ["Attack List:"]
         
+        attackList = list(self.__attacks.items())
+        for i, (attack, info) in enumerate(attackList): # Displays all attack info within the space outlined in the parameters
+            attack_list.append(f"{i + 1}. {attack} (Mana cost: {info['manaCost']})")
+        
+        attack_writer.display_output(attack_list)
+
+    def attack(self, target, chosen_attack):
+        output = []
+        
+        attackList = list(self.__attacks.items())
+        if 1 <= chosen_attack <= len(attackList):
+            attack, attackInfo = attackList[chosen_attack - 1]
+            if attack == 'Really Big Beam':
+                self.reallyBigBeam(target)
+            elif self.getCurrentMana() >= attackInfo["manaCost"]:
+                remainingMana = self.getCurrentMana() - attackInfo["manaCost"]
+                self.setCurrentMana(remainingMana)
+                attackMethod = attackInfo["method"]
+                attackOutput = attackMethod(target)
+                output.extend(attackOutput)
+            else:
+                output.append(f"A lack of necessary mana for this attack resulted in {self.getName()} collapsing from spell backlash instead.")
+        else:
+            output.append("Invalid attack.")
+
         return output
 
     # attack functions
@@ -109,7 +116,7 @@ class Mage(Character):
         spentMana = int(input("How much mana do you channel into the beam? "))
         currentMana = self.getCurrentMana()
         while currentMana < spentMana:
-            output.append("You don't have that much mana!")
+            print("You don't have that much mana!")
             spentMana = int(input("Channel a different amount of mana into the beam or face spell backlash: "))
 
         output.append(f"{spentMana} mana was spent on this attack.")

@@ -10,8 +10,29 @@ class Skeleton(Enemy):
 
     # end attributes
 
-    def __init__(self, position, window):
-        super().__init__("Skeleton", GAME_ASSETS['skeleton'], position, window, 80, 90, 50, 50)
+    def __init__(self, position, window, level):
+        defenseMultiplier = 80
+        magicResistanceMultiplier = 90
+        strength = 50
+        magicPower = 50
+        maxHP = 100
+
+        points = 3 * level # Gets 3 attribute points to assign per level
+        while points > 0:
+            skillRNG = random.randint(1,5) #randomly assigns attribute points
+            if skillRNG == 1:
+                defenseMultiplier -= 1
+            elif skillRNG == 2:
+                magicResistanceMultiplier -= 1
+            elif skillRNG == 3:
+                strength += 2
+            elif skillRNG == 4:
+                magicPower += 2
+            else:
+                maxHP += 5
+            points -= 1
+            
+        super().__init__("Skeleton", GAME_ASSETS['skeleton'], position, window, defenseMultiplier, magicResistanceMultiplier, strength, magicPower, maxHP, level)
         self.setImage(pygame.transform.scale(self.getImage(), [40, 30]))
         self.__attackList = {
             "Punch": self.punch,

@@ -1,11 +1,11 @@
 import pygame
 
 class TextRenderer:
-    def __init__(self, window, text_area):
+    def __init__(self, window, text_area, font_size):
         self.__window = window
         self.__text_area = text_area
         pygame.font.init()
-        self.__font = pygame.font.Font(None, 26)
+        self.__font = pygame.font.Font(None, font_size)
         self.__first_space, self.__first_line = self.__text_area.topleft
         self.__current_line = 0
 

@@ -1,35 +1,134 @@
 #attributes
-__enemy = None
-__player_class = None
-__player = None
+MAX_LEVEL = 50  # Maximum level a character can reach
+ATTRIBUTE_POINTS_PER_LEVEL = 3  # Number of attribute points gained per level
+__name = None  # Character's name
+__maxHP = None
+__currentHP = None
+__character_class = None  # Character's class
+__defenseMultiplier = None  # decimal multiplier representing % of physical damage that will be dealt upon getting hit
+#not called defense because it is the damage that you DO take, not damage blocked
+__magicResistance = None # decimal multiplier representing % of magic damage recieved upon hit
+__exposed = None # status effect that increases incoming damage
+__level = None  # Character's current level
+__EXP = None  # Character's current experience points
+__EXP_to_next_level = None  # How much xp you need to get to the next level
+__attribute_points = None  # Attribute points available to allocate
+__cursedStatus = None
+__curseTimer = None # no. of turns that a curse needs to deal the damage
 #end attributes
 
     #constructors
-def __init__(self, enemy, playerclass, player, ):
-    self.__enemy = enemy
-    self.__player_class = playerclass
-    self.__player = player
+def __init__(self, name, maxHP, currentHP, characterclass, defenseMultiplier, magicResistance, exposed, level, EXP, EXPtonextlevel, attributepoints, cursedStatus, curseTimer, ):
+    self.__name = name
+    self.__maxHP = maxHP
+    self.__currentHP = currentHP
+    self.__character_class = characterclass
+    self.__defenseMultiplier = defenseMultiplier
+    self.__magicResistance = magicResistance
+    self.__exposed = exposed
+    self.__level = level
+    self.__EXP = EXP
+    self.__EXP_to_next_level = EXPtonextlevel
+    self.__attribute_points = attributepoints
+    self.__cursedStatus = cursedStatus
+    self.__curseTimer = curseTimer
 
     #accessors
-    def getEnemy(self):
-        return self.__enemy
+    def getMAXLEVEL(self):
+        return self.MAX_LEVEL
 
-    def getPlayerclass(self):
-        return self.__player_class
+    def getATTRIBUTEPOINTSPERLEVEL(self):
+        return self.ATTRIBUTE_POINTS_PER_LEVEL
 
-    def getPlayer(self):
-        return self.__player
+    def getName(self):
+        return self.__name
+
+    def getMaxHP(self):
+        return self.__maxHP
+
+    def getCurrentHP(self):
+        return self.__currentHP
+
+    def getCharacterclass(self):
+        return self.__character_class
+
+    def getDefenseMultiplier(self):
+        return self.__defenseMultiplier
+
+    def get#not(self):
+        return self.#not
+
+    def getMagicResistance(self):
+        return self.__magicResistance
+
+    def getExposed(self):
+        return self.__exposed
+
+    def getLevel(self):
+        return self.__level
+
+    def getEXP(self):
+        return self.__EXP
+
+    def getEXPtonextlevel(self):
+        return self.__EXP_to_next_level
+
+    def getAttributepoints(self):
+        return self.__attribute_points
+
+    def getCursedStatus(self):
+        return self.__cursedStatus
+
+    def getCurseTimer(self):
+        return self.__curseTimer
 
 
 #mutators
-    def setEnemy(self, newEnemy):
-        self.__enemy = newEnemy
+    def setMAXLEVEL(self, newMAXLEVEL):
+        self.MAX_LEVEL = newMAXLEVEL
 
-    def setPlayerclass(self, newPlayerclass):
-        self.__player_class = newPlayerclass
+    def setATTRIBUTEPOINTSPERLEVEL(self, newATTRIBUTEPOINTSPERLEVEL):
+        self.ATTRIBUTE_POINTS_PER_LEVEL = newATTRIBUTEPOINTSPERLEVEL
 
-    def setPlayer(self, newPlayer):
-        self.__player = newPlayer
+    def setName(self, newName):
+        self.__name = newName
 
+    def setMaxHP(self, newMaxHP):
+        self.__maxHP = newMaxHP
 
+    def setCurrentHP(self, newCurrentHP):
+        self.__currentHP = newCurrentHP
+
+    def setCharacterclass(self, newCharacterclass):
+        self.__character_class = newCharacterclass
+
+    def setDefenseMultiplier(self, newDefenseMultiplier):
+        self.__defenseMultiplier = newDefenseMultiplier
+
+    def set#not(self, new#not):
+        self.#not = new#not
+
+    def setMagicResistance(self, newMagicResistance):
+        self.__magicResistance = newMagicResistance
+
+    def setExposed(self, newExposed):
+        self.__exposed = newExposed
+
+    def setLevel(self, newLevel):
+        self.__level = newLevel
+
+    def setEXP(self, newEXP):
+        self.__EXP = newEXP
+
+    def setEXPtonextlevel(self, newEXPtonextlevel):
+        self.__EXP_to_next_level = newEXPtonextlevel
+
+    def setAttributepoints(self, newAttributepoints):
+        self.__attribute_points = newAttributepoints
+
+    def setCursedStatus(self, newCursedStatus):
+        self.__cursedStatus = newCursedStatus
+
+    def setCurseTimer(self, newCurseTimer):
+        self.__curseTimer = newCurseTimer
 

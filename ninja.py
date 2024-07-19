@@ -1,4 +1,5 @@
 from character import Character
+from textWriter import TextRenderer
 import random
 
 class Ninja(Character):
@@ -78,15 +79,23 @@ class Ninja(Character):
         self.__concealed = newConcealedStatus
 
     # behaviours
-    def chooseAttack(self, target):
-        output = []
-        print(f"Choose an attack (Current stamina: {self.__currentStamina}):")
+    def listAttacks(self, window, attackMenuArea, fontSize):
+        attack_writer = TextRenderer(window, attackMenuArea, fontSize) 
+
+        attack_list = ["Attack List:"]
+        
         attackList = list(self.__attacks.items())
-        for i, (attack, info) in enumerate(attackList):
-            print(f"{i + 1}. {attack} (Stamina cost: {info['staminaCost']})")
-        chosenAttack = int(input("Enter the number of the attack: "))
-        if 1 <= chosenAttack <= len(attackList):
-            attack, attackInfo = attackList[chosenAttack - 1]
+        for i, (attack, info) in enumerate(attackList): # Displays all attack info within the space outlined in the parameters
+            attack_list.append(f"{i + 1}. {attack} (Stamina cost: {info['staminaCost']})")
+        
+        attack_writer.display_output(attack_list)
+
+    def attack(self, target, chosen_attack):
+        output = []
+        
+        attackList = list(self.__attacks.items())
+        if 1 <= chosen_attack <= len(attackList):
+            attack, attackInfo = attackList[chosen_attack - 1]
             if self.getCurrentStamina() >= attackInfo["staminaCost"]:
                 remainingStamina = self.getCurrentStamina() - attackInfo["staminaCost"]
                 self.setCurrentStamina(remainingStamina)
@@ -94,9 +103,10 @@ class Ninja(Character):
                 attackOutput = attackMethod(target)
                 output.extend(attackOutput)
             else:
-                output.append(f"{self.getName()} prepared for the attack, but collapsed from exhaustion instead.")
+                output.append(f"{self.getName()} got ready for a move, but collapsed from exhaustion instead.")
         else:
             output.append("Invalid attack.")
+
         return output
 
     def attackDodged(self):
@@ -175,3 +185,6 @@ class Ninja(Character):
             output.append(f"The smoke cloud dissipates, leaving {self.getName()} in the open again.")
             self.setConcealedStatus(False)
         return output
+
+    #skill point allocation
+    

@@ -10,8 +10,26 @@ class Goblin(Enemy):
 
     # end attributes
 
-    def __init__(self, position, window):
-        super().__init__('Goblin', GAME_ASSETS['goblin'], position, window, 80, 95, 60, None)
+    def __init__(self, position, window, level):
+        defenseMultiplier = 80
+        magicResistanceMultiplier = 95
+        strength = 60
+        maxHP = 100
+
+        points = 3 * level
+        while points > 0:
+            skillRNG = random.randint(1,4)
+            if skillRNG == 1:
+                defenseMultiplier -= 1
+            elif skillRNG == 2:
+                magicResistanceMultiplier -= 1
+            elif skillRNG == 3:
+                strength += 2
+            else:
+                maxHP += 5
+            points -= 1
+
+        super().__init__('Goblin', GAME_ASSETS['goblin'], position, window, defenseMultiplier, magicResistanceMultiplier, strength, None, maxHP, level)
         # Load the goblin image from the specified path
         self.setImage(pygame.transform.scale(self.getImage(), [40,30]))
         self.__attackList = {
