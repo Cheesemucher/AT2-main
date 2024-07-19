@@ -151,6 +151,7 @@ class Map:
         Returns:
             bool: True if the player is in combat, False otherwise.
         """
+
         for enemy in self.__enemies:
             if pygame.math.Vector2(enemy.getPosition()).distance_to(self.__player_position) < 50:
                 self.__in_combat = True
@@ -163,9 +164,19 @@ class Map:
         Trigger a battle and send the "current enemy" and "player" objects over to the combat class for the duration of the battle
         """
         if self.__in_combat and self.__current_enemy:
-            battle = Combat(self.__player, self.__current_enemy, self.__window)
-            battle.draw_arena(self.__player_image)
+            battle = Combat(self.__player, self.__current_enemy, self.__window, self.__player_image)
+            battle.draw_arena()
             self.__player = battle.enter_battle()  # Receive the updated player information after the battle
+
+            self.__enemies.remove(self.__current_enemy) # Take the dead enemy from the map's enemy list
+            if not self.__enemies:
+                self.spawn_blue_orb()
+
+            # Reset combat state after combat ends
+            self.__in_combat = False
+            self.__current_enemy = None
+
+            self.draw()
 
     def spawn_blue_orb(self):
         """

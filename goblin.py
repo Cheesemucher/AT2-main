@@ -36,7 +36,9 @@ class Goblin(Enemy):
 
     # behaviours
     def attack(self, target):
-        if self.getPreviousAttack() != "Stab" and random.randint(0, 5) != 0:  # just to throw in some probability so it doesnt do stab every second turn
+        output = []
+
+        if self.getPreviousAttack() != "Stab" and random.randint(0, 5) != 0:  # just to throw in some probability so it doesn't do stab every second turn
             selectedAttack = "Stab"
         else:
             attackRoll = random.randint(0, 100)
@@ -47,23 +49,38 @@ class Goblin(Enemy):
             else:
                 selectedAttack = "Stab"
 
-        self.__attackList[selectedAttack](target)
+        attackOutput = self.__attackList[selectedAttack](target)
+        output.extend(attackOutput)
         self.setPreviousAttack(selectedAttack)
 
+        return output
+
     def stab(self, player):
+        output = []
+
         damage = (self.getStrength() + 10) * player.getDefenseMultiplier()
-        print(f"{self.getName()} stabs {player.getName()} for {damage} damage! \n")
-        player.takeDamage(damage)
+        output.append(f"{self.getName()} stabs {player.getName()} for {damage} damage!")
+        output.extend(player.takeDamage(damage))
+
+        return output
 
     def bite(self, player):
+        output = []
+
         damage = (self.getStrength() * 1.1) * player.getDefenseMultiplier()
-        print(f"{self.getName()} bites {player.getName()} for {damage} damage! \n")
-        player.takeDamage(damage)
+        output.append(f"{self.getName()} bites {player.getName()} for {damage} damage!")
+        output.extend(player.takeDamage(damage))
+
+        return output
 
     def claw(self, player):
+        output = []
+
         damage = (self.getStrength() - 10) * player.getDefenseMultiplier()
-        print(f"{self.getName()} claws {player.getName()} for {damage} damage! \n")
-        player.takeDamage(damage)
+        output.append(f"{self.getName()} claws {player.getName()} for {damage} damage!")
+        output.extend(player.takeDamage(damage))
+
+        return output
 
     def move(self):
         # Move the goblin randomly within a specified range
@@ -92,5 +109,8 @@ class Goblin(Enemy):
         self.getWindow().blit(image, position)
 
     def takeDamage(self, damage):
+        output = []
         self.setCurrentHP(self.getCurrentHP() - damage)
-        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+        return output

@@ -19,7 +19,7 @@ class Mage(Character):
         self.__currentMana = self.__maxMana
         self.__manaRegen = 10
         self.__manaStability = 100  # should be percentage
-        self.__attacks = { #decomissioned:            "Restore Magic Flux": {"method": self.restoreMagicFlux, "manaCost": 5, "spellStability": 100},
+        self.__attacks = { 
             "Fireball": {"method": self.fireball, "manaCost": 15, "spellStability": 100},
             "Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable', "spellStability": 'Variable'},
             "EXPLOSION!!!": {"method": self.explosion, "manaCost": 100, "spellStability": 0},
@@ -62,9 +62,10 @@ class Mage(Character):
     # behaviours
     def chooseAttack(self, target):
         self.setExposedStatus(False)
-        
+        output = []
+
         attackSelected = False
-        while attackSelected == False:
+        while not attackSelected:
             print(f"Choose an attack (Current mana: {self.__currentMana}):")
             attackList = list(self.__attacks.items())
             for i, (attack, info) in enumerate(attackList):
@@ -75,94 +76,128 @@ class Mage(Character):
                 if attack == 'Really Big Beam' or self.__currentMana >= attackInfo["manaCost"]:
                     print()
                     attackMethod = attackInfo["method"]
-                    attackMethod(target)
+                    attackOutput = attackMethod(target)
+                    output.extend(attackOutput)
                     attackSelected = True
                 else:
-                    print(f"A lack of necessary mana for this attack resulted in {self.getName()} to collapse from spell backlash instead.")
+                    output.append(f"A lack of necessary mana for this attack resulted in {self.getName()} collapsing from spell backlash instead.")
             else:
-                print("\nInvalid attack.\n")
+                output.append("\nInvalid attack.\n")
+        
+        return output
 
     # attack functions
     def fireball(self, target):
+        output = []
+
         # mana calcs
         attackInfo = self.__attacks["Fireball"]
         self.setCurrentMana(self.getCurrentMana() - attackInfo["manaCost"])
-        #self.__manaStability -= int(abs(attackInfo["spellStability"] - 100) / self.__currentMana)
 
         # damage calcs
         damage = self.__magicPower * target.getMagicResistanceMultiplier()
-        print(f"{self.getName()} shoots a fireball at {target.getName()} for {damage} damage!")
-        target.takeDamage(damage)
+        output.append(f"{self.getName()} shoots a fireball at {target.getName()} for {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
+
+        return output
 
     def reallyBigBeam(self, target):
+        output = []
+
         # mana calcs
-        #spentMana = self.__currentMana  # find a way to make this variable later
         spentMana = int(input("How much mana do you channel into the beam? "))
         currentMana = self.getCurrentMana()
         while currentMana < spentMana:
-            print("You don't have that much mana!")
+            output.append("You don't have that much mana!")
             spentMana = int(input("Channel a different amount of mana into the beam or face spell backlash: "))
 
-        #self.setManaStability(min(100, self.__manaStability - spentMana / self.__maxMana * 100))  # decreases mana stability by a ratio of how much mana you spent from your max
-        print(f"{spentMana} mana was spent on this attack.")
+        output.append(f"{spentMana} mana was spent on this attack.")
         self.setCurrentMana(currentMana - spentMana)
 
         # damage calcs
         damage = self.__magicPower * spentMana * target.getMagicResistanceMultiplier()
-        print(f"{self.getName()} unleashes a really big beam at {target.getName()} for {damage} damage!")
-        target.takeDamage(damage)
+        output.append(f"{self.getName()} unleashes a really big beam at {target.getName()} for {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
+
+        return output
 
     def explosion(self, target):
+        output = []
+
         # mana calcs
         attackInfo = self.__attacks["EXPLOSION!!!"] 
-        spentMana = attackInfo["manaCost"] #track spent mana to scale damage off as there will be things that increase mana cost of this spell
+        spentMana = attackInfo["manaCost"] # track spent mana to scale damage off as there will be things that increase mana cost of this spell
         self.setCurrentMana(self.getCurrentMana() - spentMana)
         self.setManaStability(0)
 
         # damage calcs
         totalDamage = 0
-        #for target in targets:
         damage = self.getMagicPower() * spentMana * self.getMaxMana() * target.getMagicResistanceMultiplier() / target.getCurrentHP()
         totalDamage += damage
-        #print(f"{self.getName()} blows up {target.getName()} for {damage} damage!")
-        #target.takeDamage(damage)
 
-        print()
-        print(f"{self.getName()}'s MASSIVE EXPLOSION dealt {totalDamage} total damage!")
-        target.takeDamage(totalDamage)
+        output.append(f"{self.getName()}'s MASSIVE EXPLOSION dealt {totalDamage} total damage!")
+        damage_output = target.takeDamage(totalDamage)
+        output.extend(damage_output)
+
+        return output
 
     def manaField(self, target):
-        #mana calcs
+        output = []
+
+        # mana calcs
         attackInfo = self.__attacks["Mana Field"]
         manaCost = attackInfo["manaCost"]
         self.setCurrentMana(self.getCurrentMana() - manaCost)
-        #self.setManaStability((100-attackInfo["spellStability"])/self.getCurrentMana)
 
-        #sets MR to 15% and armour to 70%
+        # sets MR to 15% and armour to 70%
         self.setMagicResistance(15/100)
         self.setDefenseMultiplier(70/100)
-        print(f"\n{self.getName()} sets up a magic barrier. {self.getName()} now blocks 85% of incoming magic damage and 30% of incoming physical damage.")
+        output.append(f"{self.getName()} sets up a magic barrier. {self.getName()} now blocks 85% of incoming magic damage and 30% of incoming physical damage.")
 
-    def restoreMagicFlux(self, target): #decomissioned
-        self.setManaStability(min(100, self.__manaStability + 50))  # mana stability should be a % so shouldn't exceed 100
-        print(f"{self.getName()} discharges the surrounding flow of magic with a simple spell.")
+        return output
 
     def magicGlock(self, target):
+        output = []
+
         # mana calcs
         attackInfo = self.__attacks['"Magic" Glock']
         self.setCurrentMana(self.getCurrentMana() - attackInfo["manaCost"])
-        self.__manaStability -= int(abs(attackInfo["spellStability"] - 100) / self.__currentMana)
 
         # damage calcs
         damage = (self.getMagicPower() + 20) * target.getDefenseMultiplier()
-        print(f"\n{self.getName()} pulls out a glock and taps the {target.getName()} with a quick flick to its head, pulverising it's brains with {damage} damage!")
-        target.takeDamage(damage)
+        output.append(f"{self.getName()} pulls out a glock and taps the {target.getName()} with a quick flick to its head, pulverising its brains with {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
 
+        return output
 
-    #turn based combat features
+    # turn based combat features
     def takeDamage(self, amount):
+        output = []
         self.setCurrentHP(self.getCurrentHP() - amount)
-        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        output.append(f"{self.getName()} takes {amount} damage.")
+        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        return output
 
     def upkeepPhase(self):
         self.setCurrentMana(min(self.__maxMana, self.__currentMana + self.__manaRegen))
+
+        output = []
+        if self.getCursedStatus()["status"]:
+            self.setCursedTimer(self.getCursedTimer() + 1)
+            if self.getCursedTimer() >= self.getCursedStatus()["delay"]:
+                damage = self.getCursedStatus()["damage"]
+
+                self.setCurrentHP(self.getCurrentHP() - damage)
+                output.append(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
+                self.setCursedTimer(0)
+                self.setCursedStatus(False, None, None)
+
+                output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+            else:
+                turnsLeft = self.getCursedStatus()["delay"] - self.getCursedTimer()
+                output.append(f"The curse manifests in {turnsLeft} more turn(s)...")
+
+        return output

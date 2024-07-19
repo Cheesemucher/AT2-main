@@ -1,7 +1,7 @@
 import pygame
 import random
-from enemy import Enemy
 from assets import GAME_ASSETS
+from enemy import Enemy
 
 class Skeleton(Enemy):
     # attributes
@@ -12,7 +12,7 @@ class Skeleton(Enemy):
 
     def __init__(self, position, window):
         super().__init__("Skeleton", GAME_ASSETS['skeleton'], position, window, 80, 90, 50, 50)
-        self.setImage(pygame.transform.scale(self.getImage(), [40,30]))
+        self.setImage(pygame.transform.scale(self.getImage(), [40, 30]))
         self.__attackList = {
             "Punch": self.punch,
             "Death Bolt": self.deathBolt,
@@ -58,31 +58,42 @@ class Skeleton(Enemy):
         else:
             selectedAttack = "Death Bolt"
 
-        self.__attackList[selectedAttack](target)
+        attack_output = self.__attackList[selectedAttack](target)
         self.setPreviousAttack(selectedAttack)
+        return attack_output
 
     # attacks
     def punch(self, player):
+        output = []
         damage = (self.getStrength() + 10) * player.getDefenseMultiplier()
-        print(f"{self.getName()} punches {player.getName()} for {damage} damage! \n")
-        player.takeDamage(damage)
+        output.append(f"{self.getName()} punches {player.getName()} for {damage} damage! \n")
+        damage_output = player.takeDamage(damage)
+        output.extend(damage_output)
+        return output
 
     def deathBolt(self, player):
+        output = []
         damage = (self.getMagicPower() + 30) * player.getMagicResistance()
-        print(f"{self.getName()} fires a death bolt at {player.getName()} for {damage} damage! \n")
-        player.takeDamage(damage)
+        output.append(f"{self.getName()} fires a death bolt at {player.getName()} for {damage} damage! \n")
+        damage_output = player.takeDamage(damage)
+        output.extend(damage_output)
+        return output
 
     def curse(self, player):
+        output = []
         damage = self.getMagicPower()
         turnDelay = 2
         player.setCursedStatus(True, turnDelay, damage)
-        print(f"{self.getName()} lays a curse upon {player.getName()} for {turnDelay} turns!")
+        output.append(f"{self.getName()} lays a curse upon {player.getName()} for {turnDelay} turns!")
+        return output
 
     # Game features
     
     def takeDamage(self, damage):
+        output = []
         self.setCurrentHP(self.getCurrentHP() - damage)
-        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        return output
 
     def draw(self, newPosition, scaleFactor):
         # Draw the skeleton image on the window at the current position

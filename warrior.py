@@ -1,7 +1,7 @@
 from character import Character
 
 class Warrior(Character):
-    #attributes
+    # Attributes
     __maxStamina = None
     __currentStamina = None
     __staminaRegeneration = None
@@ -9,7 +9,6 @@ class Warrior(Character):
     __defensiveStance = None
 
     __attacks = None
-    #end attributes
 
     def __init__(self, name):
         super().__init__(name, "Warrior", 60, 80)
@@ -26,7 +25,7 @@ class Warrior(Character):
             "Defensive Stance": {"method": self.defensiveStance, "staminaCost": 5},
         }
 
-    # accessors
+    # Accessors
     def getMaxStamina(self):
         return self.__maxStamina
 
@@ -45,7 +44,7 @@ class Warrior(Character):
     def getAttacks(self):
         return self.__attacks
 
-    # mutators
+    # Mutators
     def setMaxStamina(self, maxStamina):
         self.__maxStamina = maxStamina
 
@@ -64,8 +63,10 @@ class Warrior(Character):
     def setAttacks(self, attacks):
         self.__attacks = attacks
 
-    # behaviours
+    # Behaviors
     def chooseAttack(self, target):
+        output = []
+
         print(f"Choose an attack (Current stamina: {self.__currentStamina}):")
         attackList = list(self.__attacks.items())
         for i, (attack, info) in enumerate(attackList):
@@ -77,18 +78,22 @@ class Warrior(Character):
                 remainingStamina = self.getCurrentStamina() - attackInfo["staminaCost"]
                 self.setCurrentStamina(remainingStamina)
                 attackMethod = attackInfo["method"]
-                attackMethod(target)
+                attackOutput = attackMethod(target)
+                output.extend(attackOutput)
             else:
-                print(f"{self.getName()} got ready for a move, but was collapsed from exhaustion instead.")
+                output.append(f"{self.getName()} got ready for a move, but collapsed from exhaustion instead.")
         else:
-            print("Invalid attack.")
+            output.append("Invalid attack.")
+
+        return output
 
     def lunge(self, target):
         output = []
 
         damage = self.getStrength() * 1.8 * target.getDefenseMultiplier()
         output.append(f"{self.getName()} lunges at {target.getName()} for {damage} damage!")
-        target.takeDamage(damage)
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
 
         output.append(f"{self.getName()}'s lunge has left him exposed.")
         self.setExposedStatus(True)
@@ -96,70 +101,87 @@ class Warrior(Character):
         return output
 
     def slash(self, target):
+        output = []
 
-        damage = self.__strength * target.getDefenseMultiplier()  # defense multiplier calculations were put in the skills damage calculations to more easily allow for defense shred
-        print(f"{self.getName()} slashes at {target.getName()} for {damage} damage!")
-        target.takeDamage(damage)
+        damage = self.getStrength() * target.getDefenseMultiplier()
+        output.append(f"{self.getName()} slashes at {target.getName()} for {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
+
+        return output
 
     def cleave(self, target):
+        output = []
 
-        totalDamage = 0
-        #for target in targets:
-        damage = self.__strength + 10 * target.getDefenseMultiplier()
-        totalDamage += damage
-            #print(f"{self.name} cleaves {target} for {damage} damage!")
-            #target.takeDamage(damage)
-        print(f"{self.getName()} dealt a total of {totalDamage} damage with cleave!")
-        target.takeDamage(totalDamage)
+        damage = self.getStrength() + 10 * target.getDefenseMultiplier()
+        output.append(f"{self.getName()} dealt a total of {damage} damage with cleave!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
+
+        return output
 
     def shieldBash(self, target):
-        if self.getDefensiveStance() == True:
-            print(f"{self.getName()}'s defensive stance enabled a more forceful shield bash!")
-            damage = (self.getStrength() + 100 - 100*self.getDefenseMultiplier()) * target.getDefenseMultiplier()
+        output = []
+
+        if self.getDefensiveStance():
+            output.append(f"{self.getName()}'s defensive stance enabled a more forceful shield bash!")
+            damage = (self.getStrength() + 100 - 100 * self.getDefenseMultiplier()) * target.getDefenseMultiplier()
         else:
             damage = self.getStrength() * target.getDefenseMultiplier()
-        print(f"{self.getName()} shield bashes {target.getName()} for {damage} damage!")
-        target.takeDamage(damage)
+
+        output.append(f"{self.getName()} shield bashes {target.getName()} for {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
+
+        return output
 
     def defensiveStance(self, target):
+        output = []
+
         self.setDefensiveStance(True)
-        print(f"{self.getName()} takes a defensive stance, reducing incoming phyiscal damage.")
+        output.append(f"{self.getName()} takes a defensive stance, reducing incoming physical damage.")
         damage = target.getDefenseMultiplier() * 5
-        print(f"{target.getName()} is intimidated and takes {damage} damage!")
-        target.takeDamage(damage)
+        output.append(f"{target.getName()} is intimidated and takes {damage} damage!")
+        damage_output = target.takeDamage(damage)
+        output.extend(damage_output)
 
+        return output
 
-    #turn based combat related behaviours
+    # Turn-based combat related behaviors
     def takeDamage(self, amount):
+        output = []
+
         if self.getDefensiveStance():
             amount = max(amount - (100 - 100 * self.getDefenseMultiplier()), 0)
-            print(f"{self.getName()}'s defensive stance further reduced incoming damage to a total of {amount}!")
+            output.append(f"{self.getName()}'s defensive stance further reduced incoming damage to a total of {amount}!")
 
         if self.getExposedStatus():
-            print(f"{self.getName()}'s exposed state rendered all armour inneffective.")
-            amount = amount/self.getDefenseMultiplier() #gets the true damage value to deal true damage
+            output.append(f"{self.getName()}'s exposed state rendered all armor ineffective.")
+            amount = amount / self.getDefenseMultiplier()
 
         self.setCurrentHP(self.getCurrentHP() - amount)
-        print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+        return output
 
     def upkeepPhase(self):
         self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
-        self.setExposedStatus(False) #stops being exposed upon next turn
+        self.setExposedStatus(False)
 
+        output = []
         if self.getCursedStatus()["status"]:
-            self.setCursedTimer(self.getCursedTimer() +1)
+            self.setCursedTimer(self.getCursedTimer() + 1)
             if self.getCursedTimer() >= self.getCursedStatus()["delay"]:
                 damage = self.getCursedStatus()["damage"]
-                
-                self.setCurrentHP(self.getCurrentHP() - damage)
 
-                print(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
+                self.setCurrentHP(self.getCurrentHP() - damage)
+                output.append(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
                 self.setCursedTimer(0)
                 self.setCursedStatus(False, None, None)
 
-                print(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
-
+                output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
             else:
                 turnsLeft = self.getCursedStatus()["delay"] - self.getCursedTimer()
-                print(f"\nThe curse manifests in {turnsLeft} more turn(s)...\n")
+                output.append(f"The curse manifests in {turnsLeft} more turn(s)...")
 
+        return output
