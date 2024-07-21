@@ -88,12 +88,16 @@ class Combat:
             self.draw_arena()  # Draw the arena
 
             if not enemy.isAlive():  # Checks whether the enemy has died
-                self.__console_writer.write_text(f"{enemy.getName()} has been killed.")
-                #self.__console_writer.write_text(f"{player.getName()} has gained {enemy.getXpValue()} experience points!")
+                message = []
+                message.append(f"{enemy.getName()} has been killed.")
+                message.append(f"{player.getName()} has gained {enemy.getXpValue()} experience points!")
                 
                 if player.leveled_up:
-                    #self.__console_writer.write_text("Congratulations on leveling up! Time to allocate some skill points!")
+                    message.append("Congratulations on leveling up! Time to allocate some skill points!")
                     player.setCurrentHP(player.getMaxHP()) # Fully heal the player on level ups
+                print(message)
+                self.__console_writer.display_output(message)
+                pygame.display.flip()
 
                 time.sleep(2)
 
@@ -117,9 +121,7 @@ class Combat:
             self.__window.fill((0, 0, 0))  # Clear the console again for player's turn
             self.draw_arena()  # Draw the arena again
 
-            if not player.isAlive():
-                self.__console_writer.write_text(f"{player.getName()} has died")
-                time.sleep(1)
+            while not player.isAlive():
                 self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800, 600)), (0, 0))
                 pygame.display.flip()
 
@@ -127,15 +129,27 @@ class Combat:
     def draw_arena(self):
         window = self.getWindow()
 
+        #load images
         window.blit(self.__map_image, (0, 0))
         window.blit(self.__player_image, (150, (window.get_height() - self.__player_image.get_height()) / 2))
         window.blit(self.__enemy_image, (650, (window.get_height() - self.__enemy_image.get_height()) / 2))
+        
+        #player information
         self.__player.listAttacks(window, pygame.Rect(8, 420, 110, 200), 12)
-        pygame.display.flip()
+        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 110, 200), 12)
+        stat_list = []
+        for stat, value in self.__player.getStats().items():
+            stat_list.append(f"{stat}: {value}")
+        stat_writer.display_output(stat_list)
+
+        #enemy information
+
+        pygame.display.flip() #update the display
 
     def choose_attack(self):
         chosen_attack = None
-        #self.__console_writer.write_text("Enter the number of the desired attack.")
+        self.__console_writer.display_output(["Enter the number of the desired attack."])
+        pygame.display.flip()
 
         while not chosen_attack: # Repeats a loop checking for key inputs until an attack is chosen
             for event in pygame.event.get():
@@ -152,5 +166,8 @@ class Combat:
                         chosen_attack = 4
                     elif event.key == pygame.K_5:
                         chosen_attack = 5
+
+        self.__window.fill((0, 0, 0))  # Clear the console for the enemy's turn
+        self.draw_arena()  # Redraw the arena
 
         return chosen_attack # Returns chosen attack number
