@@ -2,6 +2,7 @@ import pygame
 from assets import GAME_ASSETS
 import time
 from textWriter import TextRenderer
+from button import Button
 
 class Combat:
     # Attributes
@@ -12,6 +13,7 @@ class Combat:
     __player_image = None
     __enemy_image = None
     __console_writer = None
+    __acknowledged_button = None  # Adding the new attribute
 
     def __init__(self, player, enemy, window, player_image):
         self.__enemy = enemy
@@ -22,6 +24,7 @@ class Combat:
         self.__player_image = pygame.transform.scale(player_image, (100, 150))
         self.__enemy_image = pygame.transform.scale(self.__enemy.getImage(), (100, 150))
         self.__console_writer = TextRenderer(window, pygame.Rect(310, 70, 210, 500), 26) # make a TextRenderer object for writing in the background place
+        self.__acknowledged_button = Button(400, 400, 200, 40, (0,150,0), 28, "Acknowledged?", "acknowledge")
 
     # Accessors
     def getEnemy(self):
@@ -44,6 +47,9 @@ class Combat:
 
     def getConsoleWriter(self):
         return self.__console_writer
+
+    def getAcknowledgedButton(self):
+        return self.__acknowledged_button
 
     # Mutators
     def setEnemy(self, newEnemy):
@@ -69,6 +75,20 @@ class Combat:
     def setConsoleWriter(self, newConsoleWriter):
         self.__console_writer = newConsoleWriter
 
+    def setAcknowledgedButton(self, newAcknowledgedButton):
+        self.__acknowledged_button = newAcknowledgedButton
+
+    #Behaviours
+    # checks whether user is ready to continue battle
+    def seek_acknowledgement(self):
+        while not self.acknowledgement():
+                self.__acknowledged_button.draw(self.__window)
+                pygame.display.flip()
+        
+        # Reset the arena
+        self.__window.fill((0, 0, 0))  # Clear the console
+        self.draw_arena()  # Draw the arena
+
     # Throws user into a loop of turn-based battle to the death
     def enter_battle(self):
 
@@ -80,12 +100,9 @@ class Combat:
             chosen_attack = self.choose_attack() # Allows player to enter a key input to choose a certain attack
             output = player.attack(enemy, chosen_attack)  # Player takes action
             self.__console_writer.display_output(output) # Writes every item stored in output onto the screen
-
             pygame.display.flip()
-            time.sleep(2)
-
-            self.__window.fill((0, 0, 0))  # Clear the console for the enemy's turn
-            self.draw_arena()  # Draw the arena
+            
+            self.seek_acknowledgement()
 
             if not enemy.isAlive():  # Checks whether the enemy has died
                 message = []
@@ -99,24 +116,22 @@ class Combat:
                 self.__console_writer.display_output(message)
                 pygame.display.flip()
 
-                time.sleep(2)
+                self.seek_acknowledgement()
 
                 player = player.gain_experience(enemy.getXpValue()) # Upates the upgraded player with newly assigned stats after level ups
-
-                time.sleep(2)
 
                 return player  # Return the updated player information to wherever 'combat' was called
 
             output = player.upkeepPhase()  # Counts a turn to have passed, triggering all regeneration and ticking up all status effect timers
             self.__console_writer.display_output(output)
 
-            time.sleep(1)
+            self.seek_acknowledgement()
 
             output = enemy.attack(player)  # Enemy takes action
             self.__console_writer.display_output(output) # Enemy action's outputs are displayed
-
             pygame.display.flip()
-            time.sleep(2)
+            
+            self.seek_acknowledgement()
 
             self.__window.fill((0, 0, 0))  # Clear the console again for player's turn
             self.draw_arena()  # Draw the arena again
@@ -171,3 +186,12 @@ class Combat:
         self.draw_arena()  # Redraw the arena
 
         return chosen_attack # Returns chosen attack number
+
+    def acknowledgement(self):
+        for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        return
+                    elif event.type == pygame.MOUSEBUTTONDOWN:
+                        pos = event.pos
+                        return self.__acknowledged_button.is_clicked(pos)  

@@ -13,13 +13,13 @@ class Button:
     __value = None 
     # End attributes
 
-    def __init__(self, x, y, width, height, colour, text, value):
+    def __init__(self, x, y, width, height, colour, font_size, text, value):
         self.__button_area = pygame.Rect(x, y, width, height)
         self.__colour = colour
         self.__original_colour = colour
         self.__hover_colour = tuple(max(0, c - 50) for c in colour)
         self.__text = text
-        self.__font = pygame.font.Font(None, 36)
+        self.__font = pygame.font.Font(None, font_size)
         self.__text_surface = self.__font.render(self.__text, True, (255, 255, 255))
         self.__text_rect = self.__text_surface.get_rect(center=self.__button_area.center)
         self.__value = value 
@@ -81,7 +81,7 @@ class Button:
         self.__value = newValue
 
     # Behaviors
-    def draw(self, screen):
+    def draw(self, window):
         mouse_pos = pygame.mouse.get_pos()  # track cursor position to update the button when hovering over it
 
         if self.getButtonArea().collidepoint(mouse_pos):  # Change button colour if mouse is over it
@@ -89,8 +89,8 @@ class Button:
         else:
             self.setColour(self.getOriginalColour())
 
-        pygame.draw.rect(screen, self.getColour(), self.getButtonArea())
-        screen.blit(self.getTextSurface(), self.getTextRect())
+        pygame.draw.rect(window, self.getColour(), self.getButtonArea())
+        window.blit(self.getTextSurface(), self.getTextRect())
 
     def is_clicked(self, pos):
         return self.getButtonArea().collidepoint(pos)

@@ -24,7 +24,7 @@ class SkillPointsAllocator:
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
         pygame.font.init()
         self.__font = pygame.font.Font(None, 36)
-        self.__exit_button = Button(690, 550, 100, 40, (0, 240, 0), "Confirm", "exit")
+        self.__exit_button = Button(690, 550, 100, 40, (0, 240, 0), 36, "Confirm", "exit")
         self.__stats = []
         self.__buttons = []
         self.__attribute_upgrades = {
@@ -101,7 +101,7 @@ class SkillPointsAllocator:
         for stat, value in self.__character.getStats().items():
             if "Current" not in stat and "Regen" not in stat:  # The getStats() dictionary has some values which are not to be used here
                 self.__stats.append((stat, value, 90, position_y))  # Write a stat and existing value
-                button = Button(50, position_y, 30, 30, (0, 255, 0), "+", stat)  # Add a "+" button next to it with the same y position
+                button = Button(50, position_y, 30, 30, (0, 255, 0), 36, "+", stat)  # Add a "+" button next to it with the same y position
                 self.__buttons.append(button)
                 position_y += 50
 
