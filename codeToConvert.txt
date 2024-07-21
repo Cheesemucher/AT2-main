@@ -1,134 +1,73 @@
 #attributes
-MAX_LEVEL = 50  # Maximum level a character can reach
-ATTRIBUTE_POINTS_PER_LEVEL = 3  # Number of attribute points gained per level
-__name = None  # Character's name
-__maxHP = None
-__currentHP = None
-__character_class = None  # Character's class
-__defenseMultiplier = None  # decimal multiplier representing % of physical damage that will be dealt upon getting hit
-#not called defense because it is the damage that you DO take, not damage blocked
-__magicResistance = None # decimal multiplier representing % of magic damage recieved upon hit
-__exposed = None # status effect that increases incoming damage
-__level = None  # Character's current level
-__EXP = None  # Character's current experience points
-__EXP_to_next_level = None  # How much xp you need to get to the next level
-__attribute_points = None  # Attribute points available to allocate
-__cursedStatus = None
-__curseTimer = None # no. of turns that a curse needs to deal the damage
+__button_area = None
+__colour = None
+__original_colour = None
+__hover_colour = None
+__text = None
+__font = None
+__text_surface = None
+__text_rect = None
 #end attributes
 
     #constructors
-def __init__(self, name, maxHP, currentHP, characterclass, defenseMultiplier, magicResistance, exposed, level, EXP, EXPtonextlevel, attributepoints, cursedStatus, curseTimer, ):
-    self.__name = name
-    self.__maxHP = maxHP
-    self.__currentHP = currentHP
-    self.__character_class = characterclass
-    self.__defenseMultiplier = defenseMultiplier
-    self.__magicResistance = magicResistance
-    self.__exposed = exposed
-    self.__level = level
-    self.__EXP = EXP
-    self.__EXP_to_next_level = EXPtonextlevel
-    self.__attribute_points = attributepoints
-    self.__cursedStatus = cursedStatus
-    self.__curseTimer = curseTimer
+def __init__(self, buttonarea, colour, originalcolour, hovercolour, text, font, textsurface, textrect, ):
+    self.__button_area = buttonarea
+    self.__colour = colour
+    self.__original_colour = originalcolour
+    self.__hover_colour = hovercolour
+    self.__text = text
+    self.__font = font
+    self.__text_surface = textsurface
+    self.__text_rect = textrect
 
     #accessors
-    def getMAXLEVEL(self):
-        return self.MAX_LEVEL
+    def getButtonarea(self):
+        return self.__button_area
 
-    def getATTRIBUTEPOINTSPERLEVEL(self):
-        return self.ATTRIBUTE_POINTS_PER_LEVEL
+    def getColour(self):
+        return self.__colour
 
-    def getName(self):
-        return self.__name
+    def getOriginalcolour(self):
+        return self.__original_colour
 
-    def getMaxHP(self):
-        return self.__maxHP
+    def getHovercolour(self):
+        return self.__hover_colour
 
-    def getCurrentHP(self):
-        return self.__currentHP
+    def getText(self):
+        return self.__text
 
-    def getCharacterclass(self):
-        return self.__character_class
+    def getFont(self):
+        return self.__font
 
-    def getDefenseMultiplier(self):
-        return self.__defenseMultiplier
+    def getTextsurface(self):
+        return self.__text_surface
 
-    def get#not(self):
-        return self.#not
-
-    def getMagicResistance(self):
-        return self.__magicResistance
-
-    def getExposed(self):
-        return self.__exposed
-
-    def getLevel(self):
-        return self.__level
-
-    def getEXP(self):
-        return self.__EXP
-
-    def getEXPtonextlevel(self):
-        return self.__EXP_to_next_level
-
-    def getAttributepoints(self):
-        return self.__attribute_points
-
-    def getCursedStatus(self):
-        return self.__cursedStatus
-
-    def getCurseTimer(self):
-        return self.__curseTimer
+    def getTextrect(self):
+        return self.__text_rect
 
 
 #mutators
-    def setMAXLEVEL(self, newMAXLEVEL):
-        self.MAX_LEVEL = newMAXLEVEL
+    def setButtonarea(self, newButtonarea):
+        self.__button_area = newButtonarea
 
-    def setATTRIBUTEPOINTSPERLEVEL(self, newATTRIBUTEPOINTSPERLEVEL):
-        self.ATTRIBUTE_POINTS_PER_LEVEL = newATTRIBUTEPOINTSPERLEVEL
+    def setColour(self, newColour):
+        self.__colour = newColour
 
-    def setName(self, newName):
-        self.__name = newName
+    def setOriginalcolour(self, newOriginalcolour):
+        self.__original_colour = newOriginalcolour
 
-    def setMaxHP(self, newMaxHP):
-        self.__maxHP = newMaxHP
+    def setHovercolour(self, newHovercolour):
+        self.__hover_colour = newHovercolour
 
-    def setCurrentHP(self, newCurrentHP):
-        self.__currentHP = newCurrentHP
+    def setText(self, newText):
+        self.__text = newText
 
-    def setCharacterclass(self, newCharacterclass):
-        self.__character_class = newCharacterclass
+    def setFont(self, newFont):
+        self.__font = newFont
 
-    def setDefenseMultiplier(self, newDefenseMultiplier):
-        self.__defenseMultiplier = newDefenseMultiplier
+    def setTextsurface(self, newTextsurface):
+        self.__text_surface = newTextsurface
 
-    def set#not(self, new#not):
-        self.#not = new#not
-
-    def setMagicResistance(self, newMagicResistance):
-        self.__magicResistance = newMagicResistance
-
-    def setExposed(self, newExposed):
-        self.__exposed = newExposed
-
-    def setLevel(self, newLevel):
-        self.__level = newLevel
-
-    def setEXP(self, newEXP):
-        self.__EXP = newEXP
-
-    def setEXPtonextlevel(self, newEXPtonextlevel):
-        self.__EXP_to_next_level = newEXPtonextlevel
-
-    def setAttributepoints(self, newAttributepoints):
-        self.__attribute_points = newAttributepoints
-
-    def setCursedStatus(self, newCursedStatus):
-        self.__cursedStatus = newCursedStatus
-
-    def setCurseTimer(self, newCurseTimer):
-        self.__curseTimer = newCurseTimer
+    def setTextrect(self, newTextrect):
+        self.__text_rect = newTextrect
 

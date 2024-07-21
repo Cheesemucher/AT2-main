@@ -71,6 +71,7 @@ class Combat:
 
     # Throws user into a loop of turn-based battle to the death
     def enter_battle(self):
+
         player = self.getPlayer()
         enemy = self.getEnemy()
 
@@ -88,8 +89,18 @@ class Combat:
 
             if not enemy.isAlive():  # Checks whether the enemy has died
                 self.__console_writer.write_text(f"{enemy.getName()} has been killed.")
-                pygame.display.flip()
+                #self.__console_writer.write_text(f"{player.getName()} has gained {enemy.getXpValue()} experience points!")
+                
+                if player.leveled_up:
+                    #self.__console_writer.write_text("Congratulations on leveling up! Time to allocate some skill points!")
+                    player.setCurrentHP(player.getMaxHP()) # Fully heal the player on level ups
+
                 time.sleep(2)
+
+                player = player.gain_experience(enemy.getXpValue()) # Upates the upgraded player with newly assigned stats after level ups
+
+                time.sleep(2)
+
                 return player  # Return the updated player information to wherever 'combat' was called
 
             output = player.upkeepPhase()  # Counts a turn to have passed, triggering all regeneration and ticking up all status effect timers
@@ -109,7 +120,7 @@ class Combat:
             if not player.isAlive():
                 self.__console_writer.write_text(f"{player.getName()} has died")
                 time.sleep(1)
-                self.__window.blit(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (0, 0))
+                self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800, 600)), (0, 0))
                 pygame.display.flip()
 
 

@@ -40,8 +40,8 @@ class Map:
         }
         self.__player_position = [self.__window.get_width() / 2, self.__window.get_height() / 2]
         self.__enemies = [
-            Goblin([50, 50], self.__window),
-            Skeleton([self.__window.get_width() - 120, 50], self.__window)
+            Goblin([50, 50], self.__window, 5),
+            Skeleton([self.__window.get_width() - 120, 50], self.__window, 5)
         ]
 
     # Accessors

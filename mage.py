@@ -8,8 +8,8 @@ class Mage(Character):
     __currentMana = None
     __magicPower = None
     __manaRegen = None
-    #__manaStability = None
     __attacks = None
+    __stats = None
     # end attributes
 
     # constructors
@@ -27,6 +27,16 @@ class Mage(Character):
             "Mana Field": {"method": self.manaField, "manaCost": 30},  # defensive against magic attacks
             '"Magic" Glock': {"method": self.magicGlock, "manaCost": 0, "spellStability": 100},
         }
+        self.__stats = {            
+            "Mana Regen Rate":self.getManaRegen(),
+            "Magic Power":self.getMagicPower(),
+            "Max Mana":self.getMaxMana(),
+            "Current Mana": self.getCurrentMana(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
+        }
 
     # accessors
     def getMagicPower(self):
@@ -40,9 +50,20 @@ class Mage(Character):
 
     def getManaRegen(self):
         return self.__manaRegen
+    
+    def getStats(self):
+        self.__stats = { # update stat values
+            "Mana Regen Rate":self.getManaRegen(),
+            "Magic Power":self.getMagicPower(),
+            "Max Mana":self.getMaxMana(),
+            "Current Mana": self.getCurrentMana(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
+        }
 
-    def getManaStability(self):
-        return self.__manaStability
+        return self.__stats
 
     # mutators
     def setMagicPower(self, newMagicPower):
@@ -59,6 +80,9 @@ class Mage(Character):
 
     def setManaStability(self, newManaStability):
         self.__manaStability = newManaStability
+
+    def setStats(self, newStats):
+        self.__stats = newStats
 
     # behaviours
     def listAttacks(self, window, attackMenuArea, fontSize):

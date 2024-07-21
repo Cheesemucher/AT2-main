@@ -2,13 +2,13 @@ from character import Character
 from textWriter import TextRenderer
 
 class Warrior(Character):
-    # Attributes
+    # attributes
     __maxStamina = None
     __currentStamina = None
     __staminaRegeneration = None
     __strength = None
     __defensiveStance = None
-
+    __stats = None
     __attacks = None
 
     def __init__(self, name):
@@ -24,6 +24,16 @@ class Warrior(Character):
             "Cleave": {"method": self.cleave, "staminaCost": 30},
             "Shield Bash": {"method": self.shieldBash, "staminaCost": 15},
             "Defensive Stance": {"method": self.defensiveStance, "staminaCost": 5},
+        }
+        self.__stats = {         
+           "Stamina Regen Rate": self.getStaminaRegeneration(),
+            "Strength":self.getStrength(),
+            "Max Stamina":self.getMaxStamina(),
+            "Current Stamina": self.getCurrentStamina(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
         }
 
     # Accessors
@@ -45,6 +55,20 @@ class Warrior(Character):
     def getAttacks(self):
         return self.__attacks
 
+    def getStats(self):
+        self.__stats = { # Update all stat values        
+            "Stamina Regen Rate": self.getStaminaRegeneration(),
+            "Strength":self.getStrength(),
+            "Max Stamina":self.getMaxStamina(),
+            "Current Stamina": self.getCurrentStamina(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
+        }
+
+        return self.__stats
+
     # Mutators
     def setMaxStamina(self, maxStamina):
         self.__maxStamina = maxStamina
@@ -63,6 +87,9 @@ class Warrior(Character):
 
     def setAttacks(self, attacks):
         self.__attacks = attacks
+
+    def setStats(self, newStats):
+        self.__stats = newStats
 
     # behaviors
     def listAttacks(self, window, attackMenuArea, fontSize):

@@ -12,6 +12,7 @@ class Ninja(Character):
     __critChance = None
     __concealed = None
     __attacks = None
+    __stats = None
     # end attributes
 
     def __init__(self, name):
@@ -29,6 +30,16 @@ class Ninja(Character):
             "Epic Katana Enemy Dicer Move": {"method": self.katana, "staminaCost": 40},
             "Smoke Bomb": {"method": self.smokeBomb, "staminaCost": 30},
             "Ninja Concentration": {"method": self.ninjaConcentration, "staminaCost": 0},
+        }
+        self.__stats = {
+            "Stamina Regen Rate": self.getStaminaRegeneration(),
+            "Strength":self.getStrength(),
+            "Max Stamina":self.getMaxStamina(),
+            "Current Stamina": self.getCurrentStamina(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
         }
 
     # accessors
@@ -52,6 +63,20 @@ class Ninja(Character):
 
     def getConcealedStatus(self):
         return self.__concealed
+    
+    def getStats(self):
+        self.__stats = { # Update all stat values            
+            "Stamina Regen Rate": self.getStaminaRegeneration(),
+            "Strength":self.getStrength(),
+            "Max Stamina":self.getMaxStamina(),
+            "Current Stamina": self.getCurrentStamina(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistance()
+        }
+
+        return self.__stats
 
     # mutators
     def setMaxStamina(self, newMaxStamina):
@@ -77,6 +102,9 @@ class Ninja(Character):
 
     def setConcealedStatus(self, newConcealedStatus):
         self.__concealed = newConcealedStatus
+
+    def setStats(self, newStats):
+        self.__stats = newStats
 
     # behaviours
     def listAttacks(self, window, attackMenuArea, fontSize):
@@ -187,4 +215,3 @@ class Ninja(Character):
         return output
 
     #skill point allocation
-    

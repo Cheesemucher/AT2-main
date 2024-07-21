@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from skill_point_distributor import SkillPointsAllocator
 
 class Character:
     #attributes
@@ -18,6 +19,7 @@ class Character:
     __attribute_points = None  # Attribute points available to allocate
     __cursedStatus = None
     __curseTimer = None # no. of turns that a curse needs to deal the damage
+    __skillPointDistributor = None
     #end attributes
 
     #constructors
@@ -37,6 +39,7 @@ class Character:
                                "delay":None,  #turn count for timer to reach
                                "damage":None} #damage taken when timer is reached
         self.__curseTimer = 0
+        self.__skillPointDistributor = SkillPointsAllocator(self)
 
     #accessors
     def getMAXLEVEL(self):
@@ -63,7 +66,7 @@ class Character:
     def getMagicResistance(self):
         return self.__magicResistance
 
-    def getExposed(self):
+    def getExposedStatus(self):
         return self.__exposed
 
     def getLevel(self):
@@ -83,6 +86,9 @@ class Character:
 
     def getCurseTimer(self):
         return self.__curseTimer
+    
+    def getSkillPointDistributor(self):
+        return self.__skillPointDistributor
 
 
     #mutators
@@ -111,7 +117,7 @@ class Character:
     def setMagicResistance(self, newMagicResistance):
         self.__magicResistance = newMagicResistance
 
-    def setExposed(self, newExposed):
+    def setExposedStatus(self, newExposed):
         self.__exposed = newExposed
 
     def setLevel(self, newLevel):
@@ -134,28 +140,27 @@ class Character:
     def setCursedTimer(self, newTimer):
         self.__curseTimer = newTimer
 
-    #behaviours
-    def assign_attribute_points(self, attribute, points):
-        # Ensure the attribute exists before assigning points
-        private_attribute = f"__{attribute}"
-        if private_attribute in self.__dict__:
-            setattr(self, private_attribute, getattr(self, private_attribute) + points)  # Add points to the attribute
-            self.__attribute_points -= points  # Decrease available attribute points
-        else:
-            print(f"Error: Attribute '{attribute}' does not exist.")
+    def setSkillPointDistributor(self, newDistributor):
+        self.__curseTimer = newDistributor
 
+    #behaviours
     def gain_experience(self, experience):
         self.__EXP += experience  # Increase character's experience points
 
         while self.__EXP >= self.__EXP_to_next_level and self.__level < self.MAX_LEVEL: # While loop to allow double level ups
+            print(f"Level up! {self.__name} is now level {self.__level}.")
+            
             self.__level += 1  # Level up the character
             self.__EXP -= self.__EXP_to_next_level  # Decrease character's experience points
             self.__attribute_points += self.ATTRIBUTE_POINTS_PER_LEVEL  # Allocate attribute points
 
-            print(f"Level up! {self.__name} is now level {self.__level}.")
-
             # Calculate experience required for next level
             self.__EXP_to_next_level = self.calculate_required_experience(self.__level + 1)
+        
+        return self.__skillPointDistributor.distribute_points(self, self.__attribute_points)
+
+    def leveled_up(self):
+        return self.__EXP >= self.__EXP_to_next_level
 
     def calculate_required_experience(self, level):
         # Example exponential scaling: Each level requires 100 more experience points than the previous level
@@ -163,10 +168,6 @@ class Character:
 
     def isAlive(self):
         return self.getCurrentHP() > 0
-
-    def allocate_attribute_points(self):
-        pass
-
 
     @abstractmethod 
     def takeDamage(self, amount):

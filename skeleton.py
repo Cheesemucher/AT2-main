@@ -7,10 +7,13 @@ class Skeleton(Enemy):
     # attributes
     __attackList = None
     __previousAttack = None
+    __XpValue = None
 
     # end attributes
 
     def __init__(self, position, window, level):
+
+        # Assigning skill points
         defenseMultiplier = 80
         magicResistanceMultiplier = 90
         strength = 50
@@ -39,6 +42,7 @@ class Skeleton(Enemy):
             "Death Bolt": self.deathBolt,
             "Curse": self.curse
         }
+        self.__XpValue = 200
 
     # accessors
     def getAttackList(self):
@@ -46,6 +50,9 @@ class Skeleton(Enemy):
 
     def getPreviousAttack(self):
         return self.__previousAttack
+    
+    def getXpValue(self):
+        return self.__XpValue
 
     # mutators
     def setAttackList(self, newAttackList):
@@ -53,6 +60,9 @@ class Skeleton(Enemy):
 
     def setPreviousAttack(self, newPreviousAttack):
         self.__previousAttack = newPreviousAttack
+
+    def setXpValue(self, newXP_value):
+        self.__previousAttack = newXP_value
 
     # behaviours
     def move(self):

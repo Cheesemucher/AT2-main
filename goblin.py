@@ -7,7 +7,7 @@ class Goblin(Enemy):
     # attributes
     __attackList = None
     __previousAttack = None
-
+    __XpValue = None
     # end attributes
 
     def __init__(self, position, window, level):
@@ -37,6 +37,7 @@ class Goblin(Enemy):
             "Claw": self.claw,
             "Bite": self.bite
         }
+        self.__XpValue = 100
 
     # accessors
     def getAttackList(self):
@@ -44,6 +45,9 @@ class Goblin(Enemy):
 
     def getPreviousAttack(self):
         return self.__previousAttack
+    
+    def getXpValue(self):
+        return self.__XpValue
 
     # mutators
     def setAttackList(self, newAttackList):
@@ -51,6 +55,9 @@ class Goblin(Enemy):
 
     def setPreviousAttack(self, newPreviousAttack):
         self.__previousAttack = newPreviousAttack
+
+    def setXpValue(self, newXp_value):
+        self.__XpValue = newXp_value
 
     # behaviours
     def attack(self, target):
