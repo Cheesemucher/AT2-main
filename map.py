@@ -21,9 +21,9 @@ class Map:
     __blue_orb = None
     __game_over = False
     __orb_position = None
-    __entity_proportions = (40, 30)  # Desired width and height for character images
+    __entity_proportions = None 
 
-    def __init__(self, window):
+    def __init__(self, window, image, enemiesList):
         """
         Initialize the Map class.
 
@@ -31,18 +31,15 @@ class Map:
             window (pygame.Surface): The game window surface.
         """
         self.__window = window
-        self.__map_image = pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha()
-        self.__map_image = pygame.transform.scale(self.__map_image, (self.__window.get_width(), self.__window.get_height()))
+        self.__map_image = pygame.transform.scale(image, (self.__window.get_width(), self.__window.get_height()))
         self.__player_images = {
             'Warrior': pygame.image.load(GAME_ASSETS['warrior']).convert_alpha(),
             'Mage': pygame.image.load(GAME_ASSETS['mage']).convert_alpha(),
             'Ninja': pygame.image.load(GAME_ASSETS["ninja"]).convert_alpha()
         }
         self.__player_position = [self.__window.get_width() / 2, self.__window.get_height() / 2]
-        self.__enemies = [
-            Goblin([50, 50], self.__window, 5),
-            Skeleton([self.__window.get_width() - 120, 50], self.__window, 5)
-        ]
+        self.__enemies = enemiesList
+        self.__entity_proportions = (40, 30)
 
     # Accessors
     def get_player(self):
@@ -226,7 +223,7 @@ class Map:
         self.handle_combat()
 
         if self.__blue_orb and self.check_orb_collision():
-            return 'quit'
+            return 'next'
 
     def draw(self):
         """
