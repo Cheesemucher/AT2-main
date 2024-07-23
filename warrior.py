@@ -104,6 +104,8 @@ class Warrior(Character):
         attack_writer.display_output(attack_list)
 
     def attack(self, target, chosen_attack):
+        self.setDefensiveStance(False) # Disable defensive stance at the beggining of next turn
+
         output = []
         
         attackList = list(self.__attacks.items())
@@ -131,7 +133,7 @@ class Warrior(Character):
         output.extend(damage_output)
 
         output.append(f"{self.getName()}'s lunge has left him exposed.")
-        self.setExposedStatus(True)
+        self.setExposedStatus(True, 2)
 
         return output
 
@@ -190,7 +192,7 @@ class Warrior(Character):
             amount = max(amount - (100 - 100 * self.getDefenseMultiplier()), 0)
             output.append(f"{self.getName()}'s defensive stance further reduced incoming damage to a total of {amount}!")
 
-        if self.getExposedStatus():
+        elif self.getExposedStatus()[0]: # Being in a defensive stance counters exposed status effects
             output.append(f"{self.getName()}'s exposed state rendered all armor ineffective.")
             amount = amount / self.getDefenseMultiplier()
 
@@ -200,23 +202,31 @@ class Warrior(Character):
         return output
 
     def upkeepPhase(self):
-        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
-        self.setExposedStatus(False)
+        output = ["End of turn: "]
 
-        output = []
+        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
+        output.append(f"{self.getName()} has regenerated {self.__staminaRegeneration} stamina.")
+        
+        if self.getExposedStatus()[1] == 0:
+            self.setExposedStatus(False, None)  # stops being exposed upon next turn
+            output.append(f"{self.getName()} is no longer exposed!")
+        elif self.getExposedStatus()[1]:
+            self.setExposedStatus(True, self.getExposedStatus()[1] - 1)
+            output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
+
         if self.getCursedStatus()["status"]:
-            self.setCursedTimer(self.getCursedTimer() + 1)
-            if self.getCursedTimer() >= self.getCursedStatus()["delay"]:
+            self.setCurseTimer(self.getCurseTimer() + 1)
+            if self.getCurseTimer() >= self.getCursedStatus()["delay"]:
                 damage = self.getCursedStatus()["damage"]
 
                 self.setCurrentHP(self.getCurrentHP() - damage)
                 output.append(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
-                self.setCursedTimer(0)
+                self.setCurseTimer(0)
                 self.setCursedStatus(False, None, None)
 
                 output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
             else:
-                turnsLeft = self.getCursedStatus()["delay"] - self.getCursedTimer()
+                turnsLeft = self.getCursedStatus()["delay"] - self.getCurseTimer()
                 output.append(f"The curse manifests in {turnsLeft} more turn(s)...")
 
         return output

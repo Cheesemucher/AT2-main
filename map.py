@@ -13,6 +13,7 @@ class Map:
     __window = None
     __map_image = None
     __player_images = None
+    __player_image = None
     __player_type = None
     __player_position = None
     __enemies = None
@@ -148,13 +149,16 @@ class Map:
         Returns:
             bool: True if the player is in combat, False otherwise.
         """
-
         for enemy in self.__enemies:
-            if pygame.math.Vector2(enemy.getPosition()).distance_to(self.__player_position) < 50:
-                self.__in_combat = True
-                self.__current_enemy = enemy
-                return True
+            position = enemy.getPosition()
+            if isinstance(position, (tuple, list)) and len(position) == 2: # To stop python from checking for the vectors to enemy positions
+                if pygame.math.Vector2(position).distance_to(self.__player_position) < 50:
+                    self.__in_combat = True
+                    self.__current_enemy = enemy
+                    return True
+
         return False
+
 
     def handle_combat(self):
         """
@@ -191,8 +195,7 @@ class Map:
             bool: True if the player has collided with the blue orb, False otherwise.
         """
         if self.__blue_orb and pygame.math.Vector2(self.__orb_position).distance_to(self.__player_position) < 25:
-            self.__game_over = True
-            print("YOU WIN")  # This can be modified to a more visual display if needed.
+            print("Stage passed")  # This can be modified to a more visual display if needed.
             return True
         return False
 
@@ -203,8 +206,6 @@ class Map:
         Returns:
             str: 'quit' if the game is over and should be exited, None otherwise.
         """
-        if self.__game_over:
-            return 'quit'  # Stop processing events if game is over
 
         keys = pygame.key.get_pressed()
         move_speed = 2

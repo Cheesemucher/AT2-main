@@ -18,8 +18,7 @@ class Mage(Character):
         self.__maxMana = 100
         self.__magicPower = 50
         self.__currentMana = self.__maxMana
-        self.__manaRegen = 10
-        self.__manaStability = 100  # should be percentage
+        self.__manaRegen = 100
         self.__attacks = { 
             "Fireball": {"method": self.fireball, "manaCost": 15, "spellStability": 100},
             "Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable', "spellStability": 'Variable'},
@@ -105,8 +104,6 @@ class Mage(Character):
             if attack == 'Really Big Beam':
                 self.reallyBigBeam(target)
             elif self.getCurrentMana() >= attackInfo["manaCost"]:
-                remainingMana = self.getCurrentMana() - attackInfo["manaCost"]
-                self.setCurrentMana(remainingMana)
                 attackMethod = attackInfo["method"]
                 attackOutput = attackMethod(target)
                 output.extend(attackOutput)
@@ -207,28 +204,43 @@ class Mage(Character):
     # turn based combat features
     def takeDamage(self, amount):
         output = []
+
+        if self.getExposedStatus()[0]: # Being in a defensive stance counters exposed status effects
+            output.append(f"{self.getName()}'s exposed state rendered all armor ineffective.")
+            amount = amount / self.getDefenseMultiplier()
+
         self.setCurrentHP(self.getCurrentHP() - amount)
         output.append(f"{self.getName()} takes {amount} damage.")
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
         return output
 
     def upkeepPhase(self):
+        output = ["End of turn: "]
+
         self.setCurrentMana(min(self.__maxMana, self.__currentMana + self.__manaRegen))
+        output.append(f"{self.getName()} has regenerated {self.__manaRegen} mana.")
+        
+        if self.getExposedStatus()[1] == 0:
+            self.setExposedStatus(False, None)  # stops being exposed upon next turn
+            output.append(f"{self.getName()} is no longer exposed!")
+        elif self.getExposedStatus()[1]:
+            self.setExposedStatus(True, self.getExposedStatus()[1] - 1)
+            output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
 
         output = []
         if self.getCursedStatus()["status"]:
-            self.setCursedTimer(self.getCursedTimer() + 1)
-            if self.getCursedTimer() >= self.getCursedStatus()["delay"]:
+            self.setCurseTimer(self.getCurseTimer() + 1)
+            if self.getCurseTimer() >= self.getCursedStatus()["delay"]:
                 damage = self.getCursedStatus()["damage"]
 
                 self.setCurrentHP(self.getCurrentHP() - damage)
                 output.append(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
-                self.setCursedTimer(0)
+                self.setCurseTimer(0)
                 self.setCursedStatus(False, None, None)
 
                 output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
             else:
-                turnsLeft = self.getCursedStatus()["delay"] - self.getCursedTimer()
+                turnsLeft = self.getCursedStatus()["delay"] - self.getCurseTimer()
                 output.append(f"The curse manifests in {turnsLeft} more turn(s)...")
 
         return output

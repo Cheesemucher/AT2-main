@@ -39,7 +39,8 @@ class Ninja(Character):
             "Max HP":self.getMaxHP(),
             "Current HP": self.getCurrentHP(),
             "Defense Multiplier": self.getDefenseMultiplier(),
-            "Magic Resistance Multiplier": self.getMagicResistance()
+            "Magic Resistance Multiplier": self.getMagicResistance(),
+            "Dodge Chance": self.getDodgeChance(),
         }
 
     # accessors
@@ -199,6 +200,9 @@ class Ninja(Character):
             output.append(f"{self.getName()} could not be found in the cloud of smoke, leaving no enemy to hit.")
         elif self.attackDodged():
             output.append(f"{self.getName()}'s quick ninja reflexes and agility allow him to completely avoid all damage!")
+        elif self.getExposedStatus()[0]: # Being unseen is mutually exclusive with exposed status effects
+            output.append(f"{self.getName()}'s exposed state rendered all armor ineffective.")
+            amount = amount / self.getDefenseMultiplier()
         else:
             self.setCurrentHP(self.getCurrentHP() - amount)
             output.append(f"{self.getName()} takes {amount} damage.")
@@ -206,12 +210,36 @@ class Ninja(Character):
         return output
 
     def upkeepPhase(self):
-        output = []
-        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
-        self.setExposedStatus(False)  # stops being exposed upon next turn
+        output = ["End of turn: "]
+        self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration)) # Regen some stamina
+        output.append(f"{self.getName()} has regenerated {self.__staminaRegeneration} stamina.")
+        
+        if self.getExposedStatus()[1] == 0:
+            self.setExposedStatus(False, None)  # stops being exposed upon next turn
+            output.append(f"{self.getName()} is no longer exposed!")
+        elif self.getExposedStatus()[1]:
+            self.setExposedStatus(True, self.getExposedStatus()[1] - 1)
+            output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
+
         if self.getConcealedStatus():
             output.append(f"The smoke cloud dissipates, leaving {self.getName()} in the open again.")
             self.setConcealedStatus(False)
+
+        if self.getCursedStatus()["status"]:
+            self.setCurseTimer(self.getCurseTimer() + 1)
+            if self.getCurseTimer() >= self.getCursedStatus()["delay"]:
+                damage = self.getCursedStatus()["damage"]
+
+                self.setCurrentHP(self.getCurrentHP() - damage)
+                output.append(f"The curse has taken hold. {self.getName()} has suffered {damage} damage!")
+                self.setCurseTimer(0)
+                self.setCursedStatus(False, None, None)
+
+                output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+            else:
+                turnsLeft = self.getCursedStatus()["delay"] - self.getCurseTimer()
+                output.append(f"The curse manifests in {turnsLeft} more turn(s)...")
+
         return output
 
     #skill point allocation

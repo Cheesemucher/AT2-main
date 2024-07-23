@@ -30,7 +30,7 @@ class Character:
         self.__character_class = characterclass
         self.__defenseMultiplier = armor/100
         self.__magicResistance = magicResistance/100
-        self.__exposed = False
+        self.__exposed = (False, None)
         self.__maxHP = 100 + (self.__level * 20)
         self.__currentHP = self.__maxHP
         self.__EXP_to_next_level = 100
@@ -117,8 +117,8 @@ class Character:
     def setMagicResistance(self, newMagicResistance):
         self.__magicResistance = newMagicResistance
 
-    def setExposedStatus(self, newExposed):
-        self.__exposed = newExposed
+    def setExposedStatus(self, newExposedStatus, duration):
+        self.__exposed = (newExposedStatus, duration)
 
     def setLevel(self, newLevel):
         self.__level = newLevel
@@ -137,7 +137,7 @@ class Character:
         self.__cursedStatus["delay"] = delay
         self.__cursedStatus["status"] = status
 
-    def setCursedTimer(self, newTimer):
+    def setCurseTimer(self, newTimer):
         self.__curseTimer = newTimer
 
     def setSkillPointDistributor(self, newDistributor):
