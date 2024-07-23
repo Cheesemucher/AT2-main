@@ -36,9 +36,10 @@ class Map:
             'Mage': pygame.image.load(GAME_ASSETS['mage']).convert_alpha(),
             'Ninja': pygame.image.load(GAME_ASSETS["ninja"]).convert_alpha()
         }
-        self.__player_position = [self.__window.get_width() / 2, self.__window.get_height() / 2]
+        self.__entity_proportions = (60, 50)
+        self.__player_position = [(self.__window.get_width() - self.__entity_proportions[0])/2, self.__window.get_height() / 2 + 200] # Gives the player an initial position in the bottom-middle area of the screen
         self.__enemies = enemiesList
-        self.__entity_proportions = (40, 30)
+        
 
     # Accessors
     def getPlayer(self):
@@ -213,15 +214,26 @@ class Map:
         """
 
         keys = pygame.key.get_pressed()
-        move_speed = 2
+        move_speed = 5
+
         if keys[pygame.K_LEFT]:
             self.__player_position[0] -= move_speed
+            if self.__player_position[0] <= 0:  # Ensure you do not leave border
+                self.__player_position[0] = 0  # Set position to the border if you do
+
         if keys[pygame.K_RIGHT]:
             self.__player_position[0] += move_speed
+            if self.__player_position[0] + self.__entity_proportions[0] >= self.__window.get_width():  # Check against the right edge including player width
+                self.__player_position[0] = self.__window.get_width() - self.__entity_proportions[0]
+
         if keys[pygame.K_UP]:
             self.__player_position[1] -= move_speed
+            if self.__player_position[1] <= 0:
+                self.__player_position[1] = 0
         if keys[pygame.K_DOWN]:
             self.__player_position[1] += move_speed
+            if self.__player_position[1] + self.__entity_proportions[1] >= self.__window.get_height():
+                self.__player_position[1] = self.__window.get_height() - self.__entity_proportions[1]
         
         if not self.__in_combat:
             if self.check_for_combat():
@@ -239,7 +251,7 @@ class Map:
         self.__window.blit(self.__map_image, (0, 0))
         self.__window.blit(self.__player_image, (self.__player_position[0], self.__player_position[1]))
         for enemy in self.__enemies:
-            enemy.draw(None, 1)
+            enemy.draw(None, self.__entity_proportions)
         if self.__blue_orb:
             self.__window.blit(self.__blue_orb, self.__orb_position)
         pygame.display.flip()

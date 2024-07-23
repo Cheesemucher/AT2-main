@@ -121,8 +121,8 @@ class Goblin(Enemy):
         position[1] = max(0, min(window.get_height() - image.get_height(), position[1]))  # Clamp the y-coordinate
         self.setPosition(position)
 
-    def draw(self, newPosition, scaleFactor):
-        '''Draw the skeleton image on the window at the current position'''
+    def draw(self, newPosition, size):
+        '''Draw the goblin image on the window at the current position'''
 
         # Generate a random position if this class has no position currently 
         if not self.getPosition():
@@ -135,7 +135,7 @@ class Goblin(Enemy):
         else:
             position = self.getPosition() # if no new position is given, it uses its current position instead
 
-        image = pygame.transform.scale(self.getImage(), (self.getImage().get_width() * scaleFactor, self.getImage().get_height() * scaleFactor)) # Resizes the image to be drawn based on the scale factor
+        image = pygame.transform.scale(self.getImage(), (size)) # Resizes the image to be drawn based on the given dimensions
 
         self.getWindow().blit(image, position)
 

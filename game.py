@@ -4,7 +4,7 @@ from character_select import CharacterSelect
 from map import Map
 from goblin import Goblin
 from skeleton import Skeleton
-from ghoul import Ghoul
+from wraith import Wraith
 from assets import load_assets, GAME_ASSETS
 
 class Game:
@@ -28,10 +28,10 @@ class Game:
         self.__current_stage = 0
         self.__game_maps = [ # Stores an instance of the Map class for each stage in the game
             Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 5), Skeleton([self.__window.get_width() - 120, 50], self.__window, 5)]), 
-            Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Ghoul(None, self.__window, 4 + i) for i in range(3)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 4 + i) for i in range(3)]),
             Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 8) for i in range(8)]),
             #Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), [Boss([self.__window.get_width()/2,self.__window.get_height()/2])]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 20) for i in range(6)] + [Ghoul(None, self.__window, 15 + i) for i in range(3)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 20) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
         ]
     
     # Accessors

@@ -126,7 +126,7 @@ class Skeleton(Enemy):
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
         return output
 
-    def draw(self, newPosition, scaleFactor):
+    def draw(self, newPosition, size):
         ''' Draw the skeleton image on the window at the current position'''
 
         # Generate a random position if this class has no position currently 
@@ -140,6 +140,6 @@ class Skeleton(Enemy):
         else:
             position = self.getPosition() # if no new position is given, it uses its current position instead
 
-        image = pygame.transform.scale(self.getImage(), (self.getImage().get_width() * scaleFactor, self.getImage().get_height() * scaleFactor)) # Resizes the image to be drawn based on the scale factor
+        image = pygame.transform.scale(self.getImage(), (size)) # Resizes the image to be drawn based on the given dimensions
 
         self.getWindow().blit(image, position)

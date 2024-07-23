@@ -3,7 +3,7 @@ import random
 from assets import GAME_ASSETS
 from enemy import Enemy
 
-class Ghoul(Enemy):
+class Wraith(Enemy):
     # attributes
     __attackList = None
     __previousAttack = None
@@ -35,7 +35,7 @@ class Ghoul(Enemy):
                 maxHP += 5
             points -= 1
             
-        super().__init__("Ghoul", GAME_ASSETS['ghoul'], position, window, defenseMultiplier, magicResistanceMultiplier, strength, magicPower, maxHP, level)
+        super().__init__("Wraith", GAME_ASSETS['wraith'], position, window, defenseMultiplier, magicResistanceMultiplier, strength, magicPower, maxHP, level)
         self.setImage(pygame.transform.scale(self.getImage(), [40, 30]))
         self.__attackList = {
             "Headbut": self.headbutt,
@@ -135,7 +135,7 @@ class Ghoul(Enemy):
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
         return output
 
-    def draw(self, newPosition, scaleFactor):
+    def draw(self, newPosition, size):
         ''' Draw the ghoul image on the window at the current position'''
         # Generate a random position if this class has no position currently 
         if not self.getPosition():
@@ -148,6 +148,6 @@ class Ghoul(Enemy):
         else:
             position = self.getPosition() # if no new position is given, it uses its current position instead
 
-        image = pygame.transform.scale(self.getImage(), (self.getImage().get_width() * scaleFactor, self.getImage().get_height() * scaleFactor)) # Resizes the image to be drawn based on the scale factor
+        image = pygame.transform.scale(self.getImage(), (size)) # Resizes the image to be drawn based on the scale factor
 
         self.getWindow().blit(image, position)
