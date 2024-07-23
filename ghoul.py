@@ -43,7 +43,7 @@ class Ghoul(Enemy):
             "Expose": self.expose,
             "Curse": self.curse
         }
-        self.__XpValue = 200
+        self.__XpValue = 120 + 5 * level
 
     # accessors
     def getAttackList(self):
@@ -71,11 +71,11 @@ class Ghoul(Enemy):
         window = self.getWindow()
         image = self.getImage()
         
-        # Move the skeleton randomly within a specified range
+        # Move the ghoul randomly within a specified range
         position[0] += random.randint(-15, 15)  # Move horizontally
         position[1] += random.randint(-15, 15)  # Move vertically
 
-        # Ensure the skeleton stays within the bounds of the window
+        # Ensure the ghoul stays within the bounds of the window
         position[0] = max(0, min(window.get_width() - image.get_width(), position[0]))  # Limit horizontal movement
         position[1] = max(0, min(window.get_height() - image.get_height(), position[1]))  # Limit vertical movement
         self.setPosition(position)
@@ -136,9 +136,14 @@ class Ghoul(Enemy):
         return output
 
     def draw(self, newPosition, scaleFactor):
-        # Draw the skeleton image on the window at the current position
+        ''' Draw the ghoul image on the window at the current position'''
+        # Generate a random position if this class has no position currently 
+        if not self.getPosition():
+            startingX = random.randint(100, self.getWindow().get_width() - 100)
+            startingY = random.randint(100, self.getWindow().get_height() - 100)
+            self.setPosition((startingX, startingY))
 
-        if newPosition: # check if a different position is specified for the skeleton to be drawn at
+        if newPosition: # check if a different position is specified for the ghoul to be drawn at
             position = newPosition # use the new position instead.
         else:
             position = self.getPosition() # if no new position is given, it uses its current position instead

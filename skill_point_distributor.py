@@ -117,15 +117,17 @@ class SkillPointsAllocator:
         for button in self.__buttons:
             if button.is_clicked(pos):
                 if self.__available_points > 0 and button.getValue() in self.__attribute_upgrades:
-                    self.__attribute_upgrades[button.getValue()]()  # Call the lambda function
+                    self.__attribute_upgrades[button.getValue()]()  # Call the character class's function that coresponds with the identifier of the button pressed
                     self.__available_points -= 1
+                    self.__character.setAttributepoints(self.__available_points) # Sets the characters available points to equal the current avaialable points
+
                 break  # Exit the loop after a single button is found to be clicked
 
         self.draw_buttons()  # Redraw the screen to update values
 
     def distribute_points(self, character, available_points):
-        self.setCharacter(character)
-        self.setAvailablePoints(available_points)
+        self.setCharacter(character) # Update the character skill with the provided character object
+        self.setAvailablePoints(available_points) # Top up on attribute points based on how many are available 
 
         while self.__available_points > 0:
             self.__screen.fill((255, 255, 255))

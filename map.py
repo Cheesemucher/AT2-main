@@ -2,8 +2,6 @@ import random
 import pygame
 from assets import GAME_ASSETS
 from combat import Combat
-from goblin import Goblin
-from skeleton import Skeleton
 from warrior import Warrior
 from mage import Mage
 from ninja import Ninja
@@ -32,7 +30,7 @@ class Map:
             window (pygame.Surface): The game window surface.
         """
         self.__window = window
-        self.__map_image = pygame.transform.scale(image, (self.__window.get_width(), self.__window.get_height()))
+        self.__map_image = pygame.transform.scale(image, (window.get_width(), window.get_height()))
         self.__player_images = {
             'Warrior': pygame.image.load(GAME_ASSETS['warrior']).convert_alpha(),
             'Mage': pygame.image.load(GAME_ASSETS['mage']).convert_alpha(),
@@ -43,84 +41,93 @@ class Map:
         self.__entity_proportions = (40, 30)
 
     # Accessors
-    def get_player(self):
+    def getPlayer(self):
         return self.__player
 
-    def get_window(self):
+    def getWindow(self):
         return self.__window
 
-    def get_map_image(self):
+    def getMapImage(self):
         return self.__map_image
 
-    def get_player_images(self):
+    def getPlayerImages(self):
         return self.__player_images
 
-    def get_player_type(self):
+    def getPlayerImage(self):
+        return self.__player_image
+
+    def getPlayerType(self):
         return self.__player_type
 
-    def get_player_position(self):
+    def getPlayerPosition(self):
         return self.__player_position
 
-    def get_enemies(self):
+    def getEnemies(self):
         return self.__enemies
 
-    def get_in_combat(self):
+    def getInCombat(self):
         return self.__in_combat
 
-    def get_current_enemy(self):
+    def getCurrentEnemy(self):
         return self.__current_enemy
 
-    def get_blue_orb(self):
+    def getBlueOrb(self):
         return self.__blue_orb
 
-    def get_game_over(self):
+    def getGameOver(self):
         return self.__game_over
 
-    def get_orb_position(self):
+    def getOrbPosition(self):
         return self.__orb_position
 
-    def get_entity_proportions(self):
+    def getEntityProportions(self):
         return self.__entity_proportions
 
     # Mutators
-    def set_player(self, new_player):
+    def setPlayer(self, new_player):
         self.__player = new_player
 
-    def set_window(self, new_window):
+    def setWindow(self, new_window):
         self.__window = new_window
 
-    def set_map_image(self, new_map_image):
+    def setMapImage(self, new_map_image):
         self.__map_image = new_map_image
 
-    def set_player_images(self, new_player_images):
+    def setPlayerImages(self, new_player_images):
         self.__player_images = new_player_images
 
-    def set_player_type(self, new_player_type):
+    def setPlayerImage(self, new_player_image):
+        self.__player_image = new_player_image
+
+    def setPlayerType(self, new_player_type):
         self.__player_type = new_player_type
 
-    def set_player_position(self, new_player_position):
+    def setPlayerPosition(self, new_player_position):
         self.__player_position = new_player_position
 
-    def set_enemies(self, new_enemies):
+    def setEnemies(self, new_enemies):
         self.__enemies = new_enemies
 
-    def set_in_combat(self, new_in_combat):
+    def setInCombat(self, new_in_combat):
         self.__in_combat = new_in_combat
 
-    def set_current_enemy(self, new_current_enemy):
+    def setCurrentEnemy(self, new_current_enemy):
         self.__current_enemy = new_current_enemy
 
-    def set_blue_orb(self, new_blue_orb):
+    def setBlueOrb(self, new_blue_orb):
         self.__blue_orb = new_blue_orb
 
-    def set_game_over(self, new_game_over):
+    def setGameOver(self, new_game_over):
         self.__game_over = new_game_over
 
-    def set_orb_position(self, new_orb_position):
+    def setOrbPosition(self, new_orb_position):
         self.__orb_position = new_orb_position
 
-    def set_entity_proportions(self, new_entity_proportions):
+    def setEntityProportions(self, new_entity_proportions):
         self.__entity_proportions = new_entity_proportions
+
+
+    # Behaviors
 
     def load_player(self, character_type):
         """
@@ -134,7 +141,6 @@ class Map:
             'Mage': Mage,
             'Ninja': Ninja
         }
-
         self.__player_type = character_type
         self.__player_image = self.__player_images[character_type]  # Assigns the player an image according to the selected class
         self.__player_image = pygame.transform.scale(self.__player_image, self.__entity_proportions) # Scale the character image to required dimensions
@@ -158,7 +164,6 @@ class Map:
                     return True
 
         return False
-
 
     def handle_combat(self):
         """
@@ -217,7 +222,7 @@ class Map:
             self.__player_position[1] -= move_speed
         if keys[pygame.K_DOWN]:
             self.__player_position[1] += move_speed
-
+        
         if not self.__in_combat:
             if self.check_for_combat():
                 return

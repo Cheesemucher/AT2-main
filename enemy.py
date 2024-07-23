@@ -114,17 +114,4 @@ class Enemy:
 
     @abstractmethod
     def draw(self):
-        # Randomly create a starting position if none is provided
-        if not self.__position:
-            startingX = random.randint(100, 700)
-            startingY = random.randint(100, 500)
-            self.__position = (startingX, startingY)
-
-        # Adjust the position to ensure the image does not overflow the window boundaries
-        adjustedPosition = [
-        max(0, min(self.__window.get_width() - self.__image.get_width(), self.__position[0])),
-        max(0, min(self.__window.get_height() - self.__image.get_height(), self.__position[1]))
-        ]
-
-        # Draw the enemy image on the window at the adjusted position
-        self.__window.blit(self.__image, adjustedPosition)
+        pass

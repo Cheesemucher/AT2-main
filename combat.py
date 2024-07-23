@@ -19,10 +19,11 @@ class Combat:
         self.__enemy = enemy
         self.__player = player
         self.__window = window
+        print(self.__window.get_size())
         self.__map_image = pygame.image.load(GAME_ASSETS["arena"]).convert_alpha()
-        self.__map_image = pygame.transform.scale(self.__map_image, (800, 600))
-        self.__player_image = pygame.transform.scale(player_image, (100, 150))
-        self.__enemy_image = pygame.transform.scale(self.__enemy.getImage(), (100, 150))
+        self.__map_image = pygame.transform.scale(self.__map_image, (self.__window.get_width(), self.__window.get_height())) # Rescale map image
+        self.__player_image = pygame.transform.scale(player_image, (100, 150)) # Rescale player image
+        self.__enemy_image = pygame.transform.scale(self.__enemy.getImage(), (100, 150)) # Rescale enemy image
         self.__console_writer = TextRenderer(window, pygame.Rect(310, 70, 210, 500), 26) # make a TextRenderer object for writing in the background place
         self.__acknowledged_button = Button(400, 400, 200, 40, (0,150,0), 28, "Acknowledged?", "acknowledge")
 
@@ -112,10 +113,9 @@ class Combat:
                 if player.leveled_up:
                     message.append("Congratulations on leveling up! Time to allocate some skill points!")
                     player.setCurrentHP(player.getMaxHP()) # Fully heal the player on level ups
-                print(message)
+
                 self.__console_writer.display_output(message)
                 pygame.display.flip()
-
                 self.seek_acknowledgement()
 
                 player = player.gain_experience(enemy.getXpValue()) # Upates the upgraded player with newly assigned stats after level ups
@@ -124,6 +124,7 @@ class Combat:
 
             output = player.upkeepPhase()  # Counts a turn to have passed, triggering all regeneration and ticking up all status effect timers
             self.__console_writer.display_output(output)
+            pygame.display.flip()
 
             self.seek_acknowledgement()
 
@@ -151,7 +152,7 @@ class Combat:
         
         #player information
         self.__player.listAttacks(window, pygame.Rect(8, 420, 110, 200), 12)
-        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 110, 200), 12)
+        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 110, 200), 12) # Creates an instance of text renderer to write stats in the stat area
         stat_list = []
         for stat, value in self.__player.getStats().items():
             stat_list.append(f"{stat}: {value}")

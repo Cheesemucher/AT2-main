@@ -37,7 +37,7 @@ class Goblin(Enemy):
             "Claw": self.claw,
             "Bite": self.bite
         }
-        self.__XpValue = 100
+        self.__XpValue = 90 + 5 * level
 
     # accessors
     def getAttackList(self):
@@ -122,7 +122,13 @@ class Goblin(Enemy):
         self.setPosition(position)
 
     def draw(self, newPosition, scaleFactor):
-        # Draw the skeleton image on the window at the current position
+        '''Draw the skeleton image on the window at the current position'''
+
+        # Generate a random position if this class has no position currently 
+        if not self.getPosition():
+            startingX = random.randint(100, self.getWindow().get_width() - 100)
+            startingY = random.randint(100, self.getWindow().get_height() - 100)
+            self.setPosition((startingX, startingY))
 
         if newPosition: # check if a different position is specified for the skeleton to be drawn at
             position = newPosition # use the new position instead.

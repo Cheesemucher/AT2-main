@@ -16,13 +16,12 @@ class Game:
     __state = None  # which state the game is actually in (e.g., menu, character select, etc.)
     __current_character = None  # To store the chosen character
     __current_stage = None
-
     # End attributes
 
     def __init__(self):
         pygame.init()
         load_assets()  # load the game image assets
-        self.__window = pygame.display.set_mode((800, 600))
+        self.__window = pygame.display.set_mode((800,600))
         self.__menu = MainMenu(self.__window)  # Create an instance of the MainMenu class
         self.__character_select = CharacterSelect(self.__window)  # Create an instance of the CharacterSelect class
         self.__state = 'menu'  # Set the initial state to 'menu'
@@ -32,7 +31,7 @@ class Game:
             Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Ghoul(None, self.__window, 4 + i) for i in range(3)]),
             Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 8) for i in range(8)]),
             #Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), [Boss([self.__window.get_width()/2,self.__window.get_height()/2])]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 20) for i in range(8)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 20) for i in range(6)] + [Ghoul(None, self.__window, 15 + i) for i in range(3)]),
         ]
     
     # Accessors
@@ -98,7 +97,7 @@ class Game:
                     self.__state = 'menu'  # Change the state to 'menu'
                 elif selected_character:  # If a character is selected
                     self.__current_character = selected_character  # Set the current character to the selected character
-                    self.__game_maps[self.__current_stage].load_player(selected_character)  # Load the selected character into the current game map
+                    self.__game_maps[self.__current_stage].load_player(selected_character)  # Load the selected character into the game map
                     self.__state = 'game_map'  # Change the state to 'game_map'
 
             elif self.__state == 'game_map':  # If the state is 'game_map'
@@ -107,8 +106,14 @@ class Game:
                 if result == 'back':  # If the result is 'back'
                     self.__state = 'character_select'  # Change the state to 'character_select'
                 elif result == 'next':
-                    self.__current_stage += 1
-                    self.__game_maps[self.__current_stage].load_player(selected_character)  # Load the selected character into the new current game map
+                    player = self.__game_maps[self.__current_stage].getPlayer() # Take player information from the current stage
+                    player_image = self.__game_maps[self.__current_stage].getPlayerImage()
+
+                    self.__current_stage += 1 # Tick up the current stage number
+
+                    self.__game_maps[self.__current_stage].setPlayer(player) # Set the new maps player to the previous one
+                    self.__game_maps[self.__current_stage].setPlayerImage(player_image)
+
                 elif result == 'quit':  # If the result is 'quit'
                     pygame.quit()  # Quit pygame
                     return  # Exit the run method

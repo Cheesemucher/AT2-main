@@ -90,9 +90,7 @@ class Character:
     def getSkillPointDistributor(self):
         return self.__skillPointDistributor
 
-
     #mutators
-#mutators
     def setMAXLEVEL(self, newMAXLEVEL):
         self.MAX_LEVEL = newMAXLEVEL
 
@@ -147,17 +145,21 @@ class Character:
     def gain_experience(self, experience):
         self.__EXP += experience  # Increase character's experience points
 
-        while self.__EXP >= self.__EXP_to_next_level and self.__level < self.MAX_LEVEL: # While loop to allow double level ups
+        while self.leveled_up() and self.__level < self.MAX_LEVEL: # While loop to allow double level ups
             print(f"Level up! {self.__name} is now level {self.__level}.")
             
             self.__level += 1  # Level up the character
             self.__EXP -= self.__EXP_to_next_level  # Decrease character's experience points
-            self.__attribute_points += self.ATTRIBUTE_POINTS_PER_LEVEL  # Allocate attribute points
+            self.__attribute_points += self.ATTRIBUTE_POINTS_PER_LEVEL  # grant attribute points
 
             # Calculate experience required for next level
             self.__EXP_to_next_level = self.calculate_required_experience(self.__level + 1)
         
-        return self.__skillPointDistributor.distribute_points(self, self.__attribute_points)
+        if self.__attribute_points:
+            return self.__skillPointDistributor.distribute_points(self, self.__attribute_points)
+        
+        else: 
+            return self
 
     def leveled_up(self):
         return self.__EXP >= self.__EXP_to_next_level

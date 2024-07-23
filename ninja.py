@@ -96,7 +96,7 @@ class Ninja(Character):
         self.__dodgeChance = newDodgeChance
         if self.__dodgeChance >= 100:
             self.__dodgeChance = 99
-            print(f"{self.getName()} was unable to reach the omniscient potential required to reach 100% dodge chance.")
+            return (f"{self.getName()} was unable to reach the omniscient potential required to reach 100% dodge chance.")
 
     def setCritChance(self, newCritChance):
         self.__critChance = newCritChance
@@ -170,15 +170,18 @@ class Ninja(Character):
         output = []
         damage = self.getStrength() * target.getDefenseMultiplier() * 2
         damage += damage * (target.getMaxHP() - target.getCurrentHP()) / target.getMaxHP()  # adds damage based on % of enemy health missing
-        output.append(f"{self.getName()} dices {target.getName()} in a badass series of epic katana slices.")
+        output.append(f"{self.getName()} dices {target.getName()} in a badass series of epic katana slices. for {damage} damage.")
         damage_output = target.takeDamage(damage)
         output.extend(damage_output)
         return output
 
     def smokeBomb(self, target):
         output = []
-        self.setDodgeChance(self.getDodgeChance() + 5)
+
         output.append(f"{self.getName()}'s reflexes are heightened and dodge chance is now {self.getDodgeChance()}%.")
+        dodge_message = self.setDodgeChance(self.getDodgeChance() + 5)
+        if dodge_message:
+            output.append(dodge_message)
 
         if self.attackDodged() or self.getDodgeChance() > 30:
             self.setConcealedStatus(True)
@@ -189,8 +192,12 @@ class Ninja(Character):
 
     def ninjaConcentration(self, target):
         output = []
-        self.setDodgeChance(self.getDodgeChance() + 10)
+
         output.append(f"{self.getName()} focuses on the balance of the universe, able to now hear the wing beat of a butterfly. {self.getName()}'s dodge chance is now {self.getDodgeChance()}% for the rest of the battle")
+        dodge_message = self.setDodgeChance(self.getDodgeChance() + 10)
+        if dodge_message:
+            output.append(dodge_message)
+        
         return output
 
     # turn based combat related behaviours

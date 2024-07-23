@@ -42,7 +42,7 @@ class Skeleton(Enemy):
             "Death Bolt": self.deathBolt,
             "Curse": self.curse
         }
-        self.__XpValue = 200
+        self.__XpValue = 140 + 5 * level
 
     # accessors
     def getAttackList(self):
@@ -127,7 +127,13 @@ class Skeleton(Enemy):
         return output
 
     def draw(self, newPosition, scaleFactor):
-        # Draw the skeleton image on the window at the current position
+        ''' Draw the skeleton image on the window at the current position'''
+
+        # Generate a random position if this class has no position currently 
+        if not self.getPosition():
+            startingX = random.randint(100, self.getWindow().get_width() - 100)
+            startingY = random.randint(100, self.getWindow().get_height() - 100)
+            self.setPosition((startingX, startingY))
 
         if newPosition: # check if a different position is specified for the skeleton to be drawn at
             position = newPosition # use the new position instead.
