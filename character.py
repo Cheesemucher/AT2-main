@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from bar import Bar
 from skill_point_distributor import SkillPointsAllocator
 
 class Character:
@@ -20,10 +21,13 @@ class Character:
     __cursedStatus = None
     __curseTimer = None # no. of turns that a curse needs to deal the damage
     __skillPointDistributor = None
+    __player_health_bar = None
+    __player_resource_bar = None
+    
     #end attributes
 
     #constructors
-    def __init__(self, name, characterclass, armor, magicResistance):
+    def __init__(self, name, characterclass, armor, magicResistance, window):
         self.__name = name
         self.__level = 1
         self.__EXP = 0
