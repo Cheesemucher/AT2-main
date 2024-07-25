@@ -1,73 +1,81 @@
 #attributes
-__button_area = None
-__colour = None
-__original_colour = None
-__hover_colour = None
-__text = None
-__font = None
-__text_surface = None
-__text_rect = None
+__attackList = None
+__previousAttack = None
+__XpValue = None
+__cheeseCounter = None
+__shieldStatus = None
+__maxMana = None
+__currentMana = None
+__boss_mana_bar = None
+__boss = None
 #end attributes
 
     #constructors
-def __init__(self, buttonarea, colour, originalcolour, hovercolour, text, font, textsurface, textrect, ):
-    self.__button_area = buttonarea
-    self.__colour = colour
-    self.__original_colour = originalcolour
-    self.__hover_colour = hovercolour
-    self.__text = text
-    self.__font = font
-    self.__text_surface = textsurface
-    self.__text_rect = textrect
+def __init__(self, attackList, previousAttack, XpValue, cheeseCounter, shieldStatus, maxMana, currentMana, bossmanabar, boss, ):
+    self.__attackList = attackList
+    self.__previousAttack = previousAttack
+    self.__XpValue = XpValue
+    self.__cheeseCounter = cheeseCounter
+    self.__shieldStatus = shieldStatus
+    self.__maxMana = maxMana
+    self.__currentMana = currentMana
+    self.__boss_mana_bar = bossmanabar
+    self.__boss = boss
 
     #accessors
-    def getButtonarea(self):
-        return self.__button_area
+    def getAttackList(self):
+        return self.__attackList
 
-    def getColour(self):
-        return self.__colour
+    def getPreviousAttack(self):
+        return self.__previousAttack
 
-    def getOriginalcolour(self):
-        return self.__original_colour
+    def getXpValue(self):
+        return self.__XpValue
 
-    def getHovercolour(self):
-        return self.__hover_colour
+    def getCheeseCounter(self):
+        return self.__cheeseCounter
 
-    def getText(self):
-        return self.__text
+    def getShieldStatus(self):
+        return self.__shieldStatus
 
-    def getFont(self):
-        return self.__font
+    def getMaxMana(self):
+        return self.__maxMana
 
-    def getTextsurface(self):
-        return self.__text_surface
+    def getCurrentMana(self):
+        return self.__currentMana
 
-    def getTextrect(self):
-        return self.__text_rect
+    def getBossmanabar(self):
+        return self.__boss_mana_bar
+
+    def getBoss(self):
+        return self.__boss
 
 
 #mutators
-    def setButtonarea(self, newButtonarea):
-        self.__button_area = newButtonarea
+    def setAttackList(self, newAttackList):
+        self.__attackList = newAttackList
 
-    def setColour(self, newColour):
-        self.__colour = newColour
+    def setPreviousAttack(self, newPreviousAttack):
+        self.__previousAttack = newPreviousAttack
 
-    def setOriginalcolour(self, newOriginalcolour):
-        self.__original_colour = newOriginalcolour
+    def setXpValue(self, newXpValue):
+        self.__XpValue = newXpValue
 
-    def setHovercolour(self, newHovercolour):
-        self.__hover_colour = newHovercolour
+    def setCheeseCounter(self, newCheeseCounter):
+        self.__cheeseCounter = newCheeseCounter
 
-    def setText(self, newText):
-        self.__text = newText
+    def setShieldStatus(self, newShieldStatus):
+        self.__shieldStatus = newShieldStatus
 
-    def setFont(self, newFont):
-        self.__font = newFont
+    def setMaxMana(self, newMaxMana):
+        self.__maxMana = newMaxMana
 
-    def setTextsurface(self, newTextsurface):
-        self.__text_surface = newTextsurface
+    def setCurrentMana(self, newCurrentMana):
+        self.__currentMana = newCurrentMana
 
-    def setTextrect(self, newTextrect):
-        self.__text_rect = newTextrect
+    def setBossmanabar(self, newBossmanabar):
+        self.__boss_mana_bar = newBossmanabar
+
+    def setBoss(self, newBoss):
+        self.__boss = newBoss
 

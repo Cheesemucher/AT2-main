@@ -21,8 +21,7 @@ class Character:
     __cursedStatus = None
     __curseTimer = None # no. of turns that a curse needs to deal the damage
     __skillPointDistributor = None
-    __player_health_bar = None
-    __player_resource_bar = None
+    __player_level_bar = None
     
     #end attributes
 
@@ -44,6 +43,7 @@ class Character:
                                "damage":None} #damage taken when timer is reached
         self.__curseTimer = 0
         self.__skillPointDistributor = SkillPointsAllocator(self)
+        self.__player_level_bar = Bar(window, self, (10,10), "EXP") # Make a bar object to track players XP
 
     #accessors
     def getMAXLEVEL(self):
@@ -76,10 +76,10 @@ class Character:
     def getLevel(self):
         return self.__level
 
-    def getEXP(self):
+    def getCurrentEXP(self):
         return self.__EXP
 
-    def getEXPtonextlevel(self):
+    def getMaxEXP(self):
         return self.__EXP_to_next_level
 
     def getAttributepoints(self):
@@ -93,6 +93,9 @@ class Character:
     
     def getSkillPointDistributor(self):
         return self.__skillPointDistributor
+    
+    def getPlayerLevelBar(self):
+        return self.__player_level_bar
 
     #mutators
     def setMAXLEVEL(self, newMAXLEVEL):
@@ -145,14 +148,18 @@ class Character:
     def setSkillPointDistributor(self, newDistributor):
         self.__curseTimer = newDistributor
 
+    def setPlayerLevelbar(self, newBar):
+        self.__player_level_bar = newBar
+
+
     #behaviours
     def gain_experience(self, experience):
         self.__EXP += experience  # Increase character's experience points
 
         while self.leveled_up() and self.__level < self.MAX_LEVEL: # While loop to allow double level ups
-            print(f"Level up! {self.__name} is now level {self.__level}.")
             
             self.__level += 1  # Level up the character
+            print(f"Level up! {self.__name} is now level {self.__level}.")
             self.__EXP -= self.__EXP_to_next_level  # Decrease character's experience points
             self.__attribute_points += self.ATTRIBUTE_POINTS_PER_LEVEL  # grant attribute points
 

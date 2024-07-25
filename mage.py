@@ -1,5 +1,6 @@
 from character import Character
 from textWriter import TextRenderer
+from bar import Bar
 
 class Mage(Character):
 
@@ -13,18 +14,20 @@ class Mage(Character):
     # end attributes
 
     # constructors
-    def __init__(self, name):
-        super().__init__(name, "Mage", 90, 80)
+    def __init__(self, name, window):
+        super().__init__(name, "Mage", 90, 80, window)
         self.__maxMana = 100
         self.__magicPower = 50
         self.__currentMana = self.__maxMana
         self.__manaRegen = 100
+        self.__player_health_bar = Bar(window, self, (10,10), "HP") # Make a bar object to track players health
+        self.__player_resource_bar = Bar(window, self, (10,40), "Mana") # Make a bar object to track players stamina/mana
         self.__attacks = { 
-            "Fireball": {"method": self.fireball, "manaCost": 15, "spellStability": 100},
-            "Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable', "spellStability": 'Variable'},
-            "EXPLOSION!!!": {"method": self.explosion, "manaCost": 100, "spellStability": 0},
+            "Fireball": {"method": self.fireball, "manaCost": 15},
+            "Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable'},
+            "EXPLOSION!!!": {"method": self.explosion, "manaCost": 100},
             "Mana Field": {"method": self.manaField, "manaCost": 30},  # defensive against magic attacks
-            '"Magic" Glock': {"method": self.magicGlock, "manaCost": 0, "spellStability": 100},
+            '"Magic" Glock': {"method": self.magicGlock, "manaCost": 0},
         }
         self.__stats = {            
             "Mana Regen Rate":self.getManaRegen(),
@@ -42,7 +45,7 @@ class Mage(Character):
         return self.__magicPower
 
     def getMaxMana(self):
-        return self.__maxMana
+        return self.__maxMana + (2 * self.getLevel())
 
     def getCurrentMana(self):
         return self.__currentMana
@@ -63,6 +66,12 @@ class Mage(Character):
         }
 
         return self.__stats
+    
+    def getPlayerHealthBar(self):
+        return self.__player_health_bar
+
+    def getPlayerResourceBar(self):
+        return self.__player_resource_bar
 
     # mutators
     def setMagicPower(self, newMagicPower):
@@ -82,6 +91,12 @@ class Mage(Character):
 
     def setStats(self, newStats):
         self.__stats = newStats
+
+    def setPlayerHealthBar(self, healthBar):
+        self.__player_health_bar = healthBar
+
+    def setPlayerResourceBar(self, resourceBar):
+        self.__player_resource_bar = resourceBar
 
     # behaviours
     def listAttacks(self, window, attackMenuArea, fontSize):
@@ -111,6 +126,8 @@ class Mage(Character):
                 output.append(f"A lack of necessary mana for this attack resulted in {self.getName()} collapsing from spell backlash instead.")
         else:
             output.append("Invalid attack.")
+
+        self.getPlayerResourceBar().update_quantity() # Update the stamina/mana bar  
 
         return output
 
@@ -212,6 +229,9 @@ class Mage(Character):
         self.setCurrentHP(self.getCurrentHP() - amount)
         output.append(f"{self.getName()} takes {amount} damage.")
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+        self.getPlayerHealthBar().update_quantity() # Update the health bar to show new HP
+
         return output
 
     def upkeepPhase(self):
@@ -219,6 +239,7 @@ class Mage(Character):
 
         self.setCurrentMana(min(self.__maxMana, self.__currentMana + self.__manaRegen))
         output.append(f"{self.getName()} has regenerated {self.__manaRegen} mana.")
+        self.__player_resource_bar.update_quantity()
         
         if self.getExposedStatus()[1] == 0:
             self.setExposedStatus(False, None)  # stops being exposed upon next turn
@@ -227,7 +248,6 @@ class Mage(Character):
             self.setExposedStatus(True, self.getExposedStatus()[1] - 1)
             output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
 
-        output = []
         if self.getCursedStatus()["status"]:
             self.setCurseTimer(self.getCurseTimer() + 1)
             if self.getCurseTimer() >= self.getCursedStatus()["delay"]:

@@ -128,12 +128,6 @@ class Wraith(Enemy):
         return output
 
     # Game features
-    
-    def takeDamage(self, damage):
-        output = []
-        self.setCurrentHP(self.getCurrentHP() - damage)
-        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
-        return output
 
     def draw(self, newPosition, size):
         ''' Draw the ghoul image on the window at the current position'''

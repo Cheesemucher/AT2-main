@@ -1,6 +1,6 @@
 import pygame
 from assets import GAME_ASSETS
-import time
+from bar import Bar
 from textWriter import TextRenderer
 from button import Button
 
@@ -13,19 +13,18 @@ class Combat:
     __player_image = None
     __enemy_image = None
     __console_writer = None
-    __acknowledged_button = None  # Adding the new attribute
+    __acknowledged_button = None
 
     def __init__(self, player, enemy, window, player_image):
         self.__enemy = enemy
         self.__player = player
         self.__window = window
-        print(self.__window.get_size())
         self.__map_image = pygame.image.load(GAME_ASSETS["arena"]).convert_alpha()
         self.__map_image = pygame.transform.scale(self.__map_image, (self.__window.get_width(), self.__window.get_height())) # Rescale map image
         self.__player_image = pygame.transform.scale(player_image, (100, 150)) # Rescale player image
         self.__enemy_image = pygame.transform.scale(self.__enemy.getImage(), (100, 150)) # Rescale enemy image
         self.__console_writer = TextRenderer(window, pygame.Rect(310, 70, 210, 500), 26) # make a TextRenderer object for writing in the background place
-        self.__acknowledged_button = Button(400, 400, 200, 40, (0,150,0), 28, "Acknowledged?", "acknowledge")
+        self.__acknowledged_button = Button(window.get_width()/2 - 100, 400, 200, 40, (0,150,0), 28, "Proceed?", "acknowledge") # Create an acknowledgement button
 
     # Accessors
     def getEnemy(self):
@@ -82,7 +81,7 @@ class Combat:
     #Behaviours
     # checks whether user is ready to continue battle
     def seek_acknowledgement(self):
-        while not self.acknowledgement():
+        while not self.acknowledged():
                 self.__acknowledged_button.draw(self.__window)
                 pygame.display.flip()
         
@@ -92,7 +91,6 @@ class Combat:
 
     # Throws user into a loop of turn-based battle to the death
     def enter_battle(self):
-
         player = self.getPlayer()
         enemy = self.getEnemy()
 
@@ -110,7 +108,7 @@ class Combat:
                 message.append(f"{enemy.getName()} has been killed.")
                 message.append(f"{player.getName()} has gained {enemy.getXpValue()} experience points!")
                 
-                if player.leveled_up:
+                if player.getCurrentEXP() + enemy.getXpValue() >= player.getMaxEXP(): # Check whether the player will level up at least once before even assigning xp
                     message.append("Congratulations on leveling up! Time to allocate some skill points!")
                     player.setCurrentHP(player.getMaxHP()) # Fully heal the player on level ups
 
@@ -138,9 +136,15 @@ class Combat:
             self.draw_arena()  # Draw the arena again
 
             while not player.isAlive():
-                self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800, 600)), (0, 0))
+                self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800,600)), (0, 0))
                 pygame.display.flip()
 
+            if hasattr(enemy, 'boss'): # Check if enemy has the boss flag for upkeep
+                output = enemy.upkeepPhase()  # Counts a turn to have passed for enemy, triggering all regeneration and ticking up all status effect timers
+                self.__console_writer.display_output(output)
+                pygame.display.flip()
+
+            
 
     def draw_arena(self):
         window = self.getWindow()
@@ -152,13 +156,16 @@ class Combat:
         
         #player information
         self.__player.listAttacks(window, pygame.Rect(8, 420, 110, 200), 12)
-        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 110, 200), 12) # Creates an instance of text renderer to write stats in the stat area
+        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 100, 200), 12) # Creates an instance of text renderer to write stats in the stat area
         stat_list = []
         for stat, value in self.__player.getStats().items():
             stat_list.append(f"{stat}: {value}")
         stat_writer.display_output(stat_list)
+        self.__player.getPlayerHealthBar().update_quantity()
+        self.__player.getPlayerResourceBar().update_quantity()
 
         #enemy information
+        self.__enemy.getEnemyHealthBar().update_quantity()
 
         pygame.display.flip() #update the display
 
@@ -188,7 +195,7 @@ class Combat:
 
         return chosen_attack # Returns chosen attack number
 
-    def acknowledgement(self):
+    def acknowledged(self):
         for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()

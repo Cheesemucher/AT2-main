@@ -1,5 +1,6 @@
 import random
 import pygame
+from bar import Bar
 from assets import GAME_ASSETS
 from combat import Combat
 from warrior import Warrior
@@ -147,7 +148,7 @@ class Map:
         self.__player_image = pygame.transform.scale(self.__player_image, self.__entity_proportions) # Scale the character image to required dimensions
         
         # Instantiate the player object using the correct class
-        self.__player = character_classes[character_type]("name")
+        self.__player = character_classes[character_type]("name", self.__window)
 
     def check_for_combat(self):
         """
@@ -250,6 +251,7 @@ class Map:
         self.__window.fill((0, 0, 0))
         self.__window.blit(self.__map_image, (0, 0))
         self.__window.blit(self.__player_image, (self.__player_position[0], self.__player_position[1]))
+        self.__player.getPlayerLevelBar().update_quantity()
         for enemy in self.__enemies:
             enemy.draw(None, self.__entity_proportions)
         if self.__blue_orb:

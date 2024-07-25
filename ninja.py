@@ -1,5 +1,6 @@
 from character import Character
 from textWriter import TextRenderer
+from bar import Bar
 import random
 
 class Ninja(Character):
@@ -15,15 +16,17 @@ class Ninja(Character):
     __stats = None
     # end attributes
 
-    def __init__(self, name):
-        super().__init__(name, "Ninja", 90, 100)
-        self.__maxStamina = 100 + (2 * self.getLevel())
+    def __init__(self, name, window):
+        super().__init__(name, "Ninja", 90, 100, window)
+        self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
         self.__staminaRegeneration = 10
         self.__strength = 45
         self.__dodgeChance = 30  # % chance to dodge attacks
         self.__critChance = 20  # % chance to crit
         self.__concealed = False
+        self.__player_health_bar = Bar(window, self, (10,10), "HP") # Make a bar object to track players health
+        self.__player_resource_bar = Bar(window, self, (10,40), "Stamina") # Make a bar object to track players stamina/mana
         self.__attacks = {
             "Shuriken Throw": {"method": self.shurikenThrow, "staminaCost": 10},
             "Ninjago": {"method": self.Ninjago, "staminaCost": 30},
@@ -45,7 +48,7 @@ class Ninja(Character):
 
     # accessors
     def getMaxStamina(self):
-        return self.__maxStamina
+        return self.__maxStamina + (2 * self.getLevel())
 
     def getCurrentStamina(self):
         return self.__currentStamina
@@ -78,6 +81,12 @@ class Ninja(Character):
         }
 
         return self.__stats
+    
+    def getPlayerHealthBar(self):
+        return self.__player_health_bar
+
+    def getPlayerResourceBar(self):
+        return self.__player_resource_bar
 
     # mutators
     def setMaxStamina(self, newMaxStamina):
@@ -107,6 +116,12 @@ class Ninja(Character):
     def setStats(self, newStats):
         self.__stats = newStats
 
+    def setPlayerHealthBar(self, healthBar):
+        self.__player_health_bar = healthBar
+
+    def setPlayerResourceBar(self, resourceBar):
+        self.__player_resource_bar = resourceBar
+
     # behaviours
     def listAttacks(self, window, attackMenuArea, fontSize):
         attack_writer = TextRenderer(window, attackMenuArea, fontSize) 
@@ -135,6 +150,8 @@ class Ninja(Character):
                 output.append(f"{self.getName()} got ready for a move, but collapsed from exhaustion instead.")
         else:
             output.append("Invalid attack.")
+
+        self.getPlayerResourceBar().update_quantity() # Update the stamina/mana bar      
 
         return output
 
@@ -214,12 +231,15 @@ class Ninja(Character):
             self.setCurrentHP(self.getCurrentHP() - amount)
             output.append(f"{self.getName()} takes {amount} damage.")
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+        
+        self.getPlayerHealthBar().update_quantity() # Update the health bar to show new HP
         return output
 
     def upkeepPhase(self):
         output = ["End of turn: "]
         self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration)) # Regen some stamina
         output.append(f"{self.getName()} has regenerated {self.__staminaRegeneration} stamina.")
+        self.__player_resource_bar.update_quantity()
         
         if self.getExposedStatus()[1] == 0:
             self.setExposedStatus(False, None)  # stops being exposed upon next turn

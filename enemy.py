@@ -1,5 +1,6 @@
 import pygame
 import random
+from bar import Bar
 from abc import ABC, abstractmethod
 
 class Enemy:
@@ -15,6 +16,7 @@ class Enemy:
     __strength = None
     __magicPower = None
     __level = None
+    __enemy_health_bar = None
     #end attributes
 
 
@@ -32,6 +34,7 @@ class Enemy:
         self.__strength = strength
         self.__magicPower = magicPower
         self.__level = level
+        self.__enemy_health_bar = Bar(window, self, (3/4 * window.get_width() - 10,10), "HP") # Bar object that tracks enemy HP
 
 #accessors
     def getName(self):
@@ -66,6 +69,9 @@ class Enemy:
     
     def getLevel(self):
         return self.__level
+    
+    def getEnemyHealthBar(self):
+        return self.__enemy_health_bar
 
 
 #mutators
@@ -102,15 +108,20 @@ class Enemy:
     def setLevel(self, newLevel):
         self.__level = newLevel
 
+    def setEnemyHealthBar(self, healthBar):
+        self.__enemy_health_bar = healthBar
 
 # behaviours
     def isAlive(self):
         return self.getCurrentHP() > 0
 
-    @abstractmethod
     def takeDamage(self, damage):
-        # Reduce the enemy's health by the specified damage amount
-        pass
+        output = []
+        self.setCurrentHP(self.getCurrentHP() - damage)
+        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
+
+        self.__enemy_health_bar.update_quantity()
+        return output
 
     @abstractmethod
     def draw(self):

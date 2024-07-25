@@ -139,9 +139,4 @@ class Goblin(Enemy):
 
         self.getWindow().blit(image, position)
 
-    def takeDamage(self, damage):
-        output = []
-        self.setCurrentHP(self.getCurrentHP() - damage)
-        output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
-
-        return output
+    

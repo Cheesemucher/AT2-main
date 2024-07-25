@@ -1,5 +1,6 @@
 from character import Character
 from textWriter import TextRenderer
+from bar import Bar
 
 class Warrior(Character):
     # attributes
@@ -11,13 +12,15 @@ class Warrior(Character):
     __stats = None
     __attacks = None
 
-    def __init__(self, name):
-        super().__init__(name, "Warrior", 60, 80)
+    def __init__(self, name, window):
+        super().__init__(name, "Warrior", 60, 80, window)
         self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
         self.__staminaRegeneration = 10
         self.__strength = 50
         self.__defensiveStance = False
+        self.__player_health_bar = Bar(window, self, (10,10), "HP") # Make a bar object to track players health
+        self.__player_resource_bar = Bar(window, self, (10,40), "Stamina") # Make a bar object to track players stamina/mana
         self.__attacks = {
             "Slash": {"method": self.slash, "staminaCost": 10},
             "Lunge": {"method": self.lunge, "staminaCost": 20},
@@ -38,7 +41,7 @@ class Warrior(Character):
 
     # Accessors
     def getMaxStamina(self):
-        return self.__maxStamina
+        return self.__maxStamina + (2 * self.getLevel())
 
     def getCurrentStamina(self):
         return self.__currentStamina
@@ -68,6 +71,12 @@ class Warrior(Character):
         }
 
         return self.__stats
+    
+    def getPlayerHealthBar(self):
+        return self.__player_health_bar
+
+    def getPlayerResourceBar(self):
+        return self.__player_resource_bar
 
     # Mutators
     def setMaxStamina(self, maxStamina):
@@ -90,6 +99,12 @@ class Warrior(Character):
 
     def setStats(self, newStats):
         self.__stats = newStats
+
+    def setPlayerHealthBar(self, healthBar):
+        self.__player_health_bar = healthBar
+
+    def setPlayerResourceBar(self, resourceBar):
+        self.__player_resource_bar = resourceBar
 
     # behaviors
     def listAttacks(self, window, attackMenuArea, fontSize):
@@ -121,6 +136,8 @@ class Warrior(Character):
                 output.append(f"{self.getName()} got ready for a move, but collapsed from exhaustion instead.")
         else:
             output.append("Invalid attack.")
+
+        self.getPlayerResourceBar().update_quantity() # Update the stamina/mana bar  
 
         return output #used the output to be returned here instead of returning the single events as a list is expected by the textWriter class anyway
 
@@ -199,6 +216,8 @@ class Warrior(Character):
         self.setCurrentHP(self.getCurrentHP() - amount)
         output.append(f"{self.getName()} has {self.getCurrentHP()} HP remaining")
 
+        self.getPlayerHealthBar().update_quantity() # Update the health bar to show new HP
+
         return output
 
     def upkeepPhase(self):
@@ -206,6 +225,7 @@ class Warrior(Character):
 
         self.setCurrentStamina(min(self.__maxStamina, self.__currentStamina + self.__staminaRegeneration))
         output.append(f"{self.getName()} has regenerated {self.__staminaRegeneration} stamina.")
+        self.__player_resource_bar.update_quantity()
         
         if self.getExposedStatus()[1] == 0:
             self.setExposedStatus(False, None)  # stops being exposed upon next turn
