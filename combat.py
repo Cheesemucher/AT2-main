@@ -158,15 +158,15 @@ class Combat:
 
         #load images
         window.blit(self.__map_image, (0, 0))
-        window.blit(self.__player_image, (200, (window.get_height() - self.__player_image.get_height()) / 2))
-        window.blit(self.__enemy_image, (520, (window.get_height() - self.__enemy_image.get_height()) / 2))
+        window.blit(self.__player_image, (180, (window.get_height() - self.__player_image.get_height()+100) / 2))
+        window.blit(self.__enemy_image, (520, (window.get_height() - self.__enemy_image.get_height()+100) / 2))
 
-        pygame.draw.rect(window, (255,255,255),(0,60,window.get_width()/5,window.get_height())) # Player side bar
-        pygame.draw.rect(window,(255,255,255),(window.get_width()*4/5,60,window.get_width()/5,window.get_height())) # Enemy side bar
+        pygame.draw.rect(window, (180,180,180,180),(0,60,window.get_width()/5,window.get_height())) # Player side bar
+        pygame.draw.rect(window,(180,180,180,180),(window.get_width()*4/5,60,window.get_width()/5,window.get_height())) # Enemy side bar
         
         #player information
-        self.__player.listAttacks(window, pygame.Rect(8, 400, window.get_width()/5, 200), 12)
-        player_stat_writer = TextRenderer(window, pygame.Rect(8, 100, window.get_width()/5, 200), 16) # Creates an instance of text renderer to write stats in the stat area
+        self.__player.listAttacks(window, pygame.Rect(8, 200, window.get_width()/5, 200), 16)
+        player_stat_writer = TextRenderer(window, pygame.Rect(8, 80, window.get_width()/5, 200), 16) # Creates an instance of text renderer to write stats in the stat area
         stat_list = []
         for stat, value in self.__player.getStats().items():
             stat_list.append(f"{stat}: {value}")
@@ -181,7 +181,7 @@ class Combat:
         stat_list = []
         for stat, value in self.__enemy.getStats().items():
             stat_list.append(f"{stat}: {value}")
-            player_stat_writer = TextRenderer(window, pygame.Rect(window.get_width()*4/5 + 8, 100, window.get_width()/5, 200), 16)
+            player_stat_writer = TextRenderer(window, pygame.Rect(window.get_width()*4/5 + 8, 80, window.get_width()/5, 200), 16)
         player_stat_writer.display_output(stat_list)
 
     def choose_attack(self):
