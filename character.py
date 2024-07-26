@@ -181,6 +181,13 @@ class Character:
 
     def isAlive(self):
         return self.getCurrentHP() > 0
+    
+    def battle_end(self):
+        self.__currentHP += 10
+    
+    @abstractmethod
+    def attack(self, target, chosen_attack):
+        pass
 
     @abstractmethod 
     def takeDamage(self, amount):

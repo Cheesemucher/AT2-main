@@ -17,6 +17,7 @@ class Enemy:
     __magicPower = None
     __level = None
     __enemy_health_bar = None
+    __stat = None
     #end attributes
 
 
@@ -35,6 +36,14 @@ class Enemy:
         self.__magicPower = magicPower
         self.__level = level
         self.__enemy_health_bar = Bar(window, self, (3/4 * window.get_width() - 10,10), "HP") # Bar object that tracks enemy HP
+        self.__stats = {         
+            "Magic Power": self.getMagicPower(),
+            "Strength":self.getStrength(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistanceMultiplier()
+        }
 
 #accessors
     def getName(self):
@@ -73,6 +82,15 @@ class Enemy:
     def getEnemyHealthBar(self):
         return self.__enemy_health_bar
 
+    def getStats(self):
+        return {         
+            "Magic Power": self.getMagicPower(),
+            "Strength":self.getStrength(),
+            "Max HP":self.getMaxHP(),
+            "Current HP": self.getCurrentHP(),
+            "Defense Multiplier": self.getDefenseMultiplier(),
+            "Magic Resistance Multiplier": self.getMagicResistanceMultiplier()
+        }
 
 #mutators
     def setName(self, newName):
@@ -111,6 +129,9 @@ class Enemy:
     def setEnemyHealthBar(self, healthBar):
         self.__enemy_health_bar = healthBar
 
+    def setStats(self, newStats):
+        self.__stats = newStats
+
 # behaviours
     def isAlive(self):
         return self.getCurrentHP() > 0
@@ -122,7 +143,7 @@ class Enemy:
 
         self.__enemy_health_bar.update_quantity()
         return output
-
+    
     @abstractmethod
     def draw(self):
         pass

@@ -17,14 +17,14 @@ class Mage(Character):
     def __init__(self, name, window):
         super().__init__(name, "Mage", 90, 80, window)
         self.__maxMana = 100
-        self.__magicPower = 50
+        self.__magicPower = 60
         self.__currentMana = self.__maxMana
-        self.__manaRegen = 100
+        self.__manaRegen = 50
         self.__player_health_bar = Bar(window, self, (10,10), "HP") # Make a bar object to track players health
         self.__player_resource_bar = Bar(window, self, (10,40), "Mana") # Make a bar object to track players stamina/mana
         self.__attacks = { 
             "Fireball": {"method": self.fireball, "manaCost": 15},
-            "Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable'},
+            #"Really Big Beam": {"method": self.reallyBigBeam, "manaCost": 'Variable'}, 
             "EXPLOSION!!!": {"method": self.explosion, "manaCost": 100},
             "Mana Field": {"method": self.manaField, "manaCost": 30},  # defensive against magic attacks
             '"Magic" Glock': {"method": self.magicGlock, "manaCost": 0},
@@ -45,13 +45,13 @@ class Mage(Character):
         return self.__magicPower
 
     def getMaxMana(self):
-        return self.__maxMana + (2 * self.getLevel())
+        return self.__maxMana
 
     def getCurrentMana(self):
         return self.__currentMana
 
     def getManaRegen(self):
-        return self.__manaRegen
+        return self.__manaRegen + (2 * self.getLevel())
     
     def getStats(self):
         self.__stats = { # update stat values

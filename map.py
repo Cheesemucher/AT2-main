@@ -148,7 +148,7 @@ class Map:
         self.__player_image = pygame.transform.scale(self.__player_image, self.__entity_proportions) # Scale the character image to required dimensions
         
         # Instantiate the player object using the correct class
-        self.__player = character_classes[character_type]("name", self.__window)
+        self.__player = character_classes[character_type]("Rianni", self.__window)
 
     def check_for_combat(self):
         """
@@ -174,7 +174,12 @@ class Map:
         if self.__in_combat and self.__current_enemy:
             battle = Combat(self.__player, self.__current_enemy, self.__window, self.__player_image)
             battle.draw_arena()
-            self.__player = battle.enter_battle()  # Receive the updated player information after the battle
+            battle_outcome = battle.enter_battle()  # Receive the updated player information after the battle
+            
+            if battle_outcome == 'menu':
+                return 'menu'
+            else:
+                self.__player = battle_outcome
 
             self.__enemies.remove(self.__current_enemy) # Take the dead enemy from the map's enemy list
             if not self.__enemies:
@@ -235,11 +240,16 @@ class Map:
             self.__player_position[1] += move_speed
             if self.__player_position[1] + self.__entity_proportions[1] >= self.__window.get_height():
                 self.__player_position[1] = self.__window.get_height() - self.__entity_proportions[1]
+
+        if keys[pygame.K_ESCAPE]:
+            return "menu"
         
         if not self.__in_combat:
             if self.check_for_combat():
                 return
-        self.handle_combat()
+        result= self.handle_combat()
+        if result == 'menu':
+            return 'menu'
 
         if self.__blue_orb and self.check_orb_collision():
             return 'next'

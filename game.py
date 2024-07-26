@@ -5,6 +5,7 @@ from map import Map
 from goblin import Goblin
 from skeleton import Skeleton
 from wraith import Wraith
+from evil_dark_sorc import EvilSorceror
 from assets import load_assets, GAME_ASSETS
 
 class Game:
@@ -27,11 +28,11 @@ class Game:
         self.__state = 'menu'  # Set the initial state to 'menu'
         self.__current_stage = 0
         self.__game_maps = [ # Stores an instance of the Map class for each stage in the game
-            Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 5), Skeleton([self.__window.get_width() - 120, 50], self.__window, 5)]), 
-            Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 4 + i) for i in range(3)]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 8) for i in range(8)]),
-            #Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), [Boss([self.__window.get_width()/2,self.__window.get_height()/2])]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 20) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 2), Skeleton([self.__window.get_width() - 120, 50], self.__window, 3)]), 
+            Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 3 + i) for i in range(3)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 5) for i in range(8)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), EvilSorceror([self.__window.get_width()/2,self.__window.get_height()/2], self.__window, 10)),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 10) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
         ]
     
     # Accessors
@@ -83,6 +84,14 @@ class Game:
         while True:
             if self.__state == 'menu':  # If the state is 'menu'
                 result = self.__menu.run()  # Run the menu and get the result
+                self.__current_stage = 0
+                self.__game_maps = [ # Resets the list of map classes since they will have been changed from the previous playthrough.
+            Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 2), Skeleton([self.__window.get_width() - 120, 50], self.__window, 3)]), 
+            Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 3 + i) for i in range(3)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 5) for i in range(8)]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), EvilSorceror([self.__window.get_width()/2,self.__window.get_height()/2], self.__window, 10)),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 10) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
+            ]
                 if result == 'Start Game':  # If the result is 'Start Game'
                     self.__state = 'character_select'  # Change the state to 'character_select'
                 elif result == 'Settings':  # If the result is 'Settings'
@@ -113,7 +122,8 @@ class Game:
 
                     self.__game_maps[self.__current_stage].setPlayer(player) # Set the new maps player to the previous one
                     self.__game_maps[self.__current_stage].setPlayerImage(player_image)
-
+                elif result == 'menu':
+                    self.__state = 'menu'
                 elif result == 'quit':  # If the result is 'quit'
                     pygame.quit()  # Quit pygame
                     return  # Exit the run method

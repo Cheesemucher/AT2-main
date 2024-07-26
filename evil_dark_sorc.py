@@ -35,7 +35,7 @@ class EvilSorceror(Enemy):
             elif skillRNG == 2:
                 magicResistanceMultiplier -= 1
             elif skillRNG == 3:
-                maxMana += 10
+                self.__maxMana += 10
             elif skillRNG == 4:
                 magicPower += 2
             else:
@@ -49,8 +49,8 @@ class EvilSorceror(Enemy):
             "Unfair turn cheat": self.turn_cheat,
             "Unfair mana cheat": self.mana_cheat,
             "Unfair HP cheat" : self.HP_cheat,
-            "Magic Nuclear Arsenal": self.deathBolt,
-            "Conjure Cheese": self.deathBolt,
+            "Magic Nuclear Arsenal": self.magic_nuclear_arsenal,
+            "Conjure Cheese": self.conjure_cheese,
         }
         self.__shieldStatus = False, 0
         self.__cheeseCounter = 0

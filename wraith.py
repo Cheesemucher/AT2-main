@@ -1,5 +1,6 @@
 import pygame
 import random
+from textWriter import TextRenderer
 from assets import GAME_ASSETS
 from enemy import Enemy
 

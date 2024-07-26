@@ -97,6 +97,8 @@ class Combat:
         while player.isAlive() and enemy.isAlive():  # Repeats combat loop until either party dies
 
             chosen_attack = self.choose_attack() # Allows player to enter a key input to choose a certain attack
+            if chosen_attack == 'menu': # Check if player chose to leave
+                return 'menu'
             output = player.attack(enemy, chosen_attack)  # Player takes action
             self.__console_writer.display_output(output) # Writes every item stored in output onto the screen
             pygame.display.flip()
@@ -138,6 +140,11 @@ class Combat:
             while not player.isAlive():
                 self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800,600)), (0, 0))
                 pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        break
+                    elif event.type == pygame.KEYDOWN:
+                        return "menu"
 
             if hasattr(enemy, 'boss'): # Check if enemy has the boss flag for upkeep
                 output = enemy.upkeepPhase()  # Counts a turn to have passed for enemy, triggering all regeneration and ticking up all status effect timers
@@ -151,16 +158,19 @@ class Combat:
 
         #load images
         window.blit(self.__map_image, (0, 0))
-        window.blit(self.__player_image, (150, (window.get_height() - self.__player_image.get_height()) / 2))
-        window.blit(self.__enemy_image, (650, (window.get_height() - self.__enemy_image.get_height()) / 2))
+        window.blit(self.__player_image, (200, (window.get_height() - self.__player_image.get_height()) / 2))
+        window.blit(self.__enemy_image, (520, (window.get_height() - self.__enemy_image.get_height()) / 2))
+
+        pygame.draw.rect(window, (255,255,255),(0,60,window.get_width()/5,window.get_height())) # Player side bar
+        pygame.draw.rect(window,(255,255,255),(window.get_width()*4/5,60,window.get_width()/5,window.get_height())) # Enemy side bar
         
         #player information
-        self.__player.listAttacks(window, pygame.Rect(8, 420, 110, 200), 12)
-        stat_writer = TextRenderer(window, pygame.Rect(8, 210, 100, 200), 12) # Creates an instance of text renderer to write stats in the stat area
+        self.__player.listAttacks(window, pygame.Rect(8, 400, window.get_width()/5, 200), 12)
+        player_stat_writer = TextRenderer(window, pygame.Rect(8, 100, window.get_width()/5, 200), 16) # Creates an instance of text renderer to write stats in the stat area
         stat_list = []
         for stat, value in self.__player.getStats().items():
             stat_list.append(f"{stat}: {value}")
-        stat_writer.display_output(stat_list)
+        player_stat_writer.display_output(stat_list)
         self.__player.getPlayerHealthBar().update_quantity()
         self.__player.getPlayerResourceBar().update_quantity()
 
@@ -168,6 +178,11 @@ class Combat:
         self.__enemy.getEnemyHealthBar().update_quantity()
 
         pygame.display.flip() #update the display
+        stat_list = []
+        for stat, value in self.__enemy.getStats().items():
+            stat_list.append(f"{stat}: {value}")
+            player_stat_writer = TextRenderer(window, pygame.Rect(window.get_width()*4/5 + 8, 100, window.get_width()/5, 200), 16)
+        player_stat_writer.display_output(stat_list)
 
     def choose_attack(self):
         chosen_attack = None
@@ -189,6 +204,8 @@ class Combat:
                         chosen_attack = 4
                     elif event.key == pygame.K_5:
                         chosen_attack = 5
+                    if event.key == pygame.K_ESCAPE:
+                            return "menu"
 
         self.__window.fill((0, 0, 0))  # Clear the console for the enemy's turn
         self.draw_arena()  # Redraw the arena

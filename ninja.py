@@ -20,7 +20,7 @@ class Ninja(Character):
         super().__init__(name, "Ninja", 90, 100, window)
         self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
-        self.__staminaRegeneration = 10
+        self.__staminaRegeneration = 20
         self.__strength = 45
         self.__dodgeChance = 30  # % chance to dodge attacks
         self.__critChance = 20  # % chance to crit
@@ -48,14 +48,14 @@ class Ninja(Character):
 
     # accessors
     def getMaxStamina(self):
-        return self.__maxStamina + (2 * self.getLevel())
+        return self.__maxStamina 
 
     def getCurrentStamina(self):
         return self.__currentStamina
 
     def getStaminaRegeneration(self):
-        return self.__staminaRegeneration
-
+        return self.__staminaRegeneration + (2 * self.getLevel())
+    
     def getStrength(self):
         return self.__strength
 
@@ -201,7 +201,7 @@ class Ninja(Character):
             output.append(dodge_message)
 
         if self.attackDodged() or self.getDodgeChance() > 30:
-            self.setConcealedStatus(True)
+            self.setConcealedStatus(2)
             output.append(f"{self.getName()} vanishes within a cloud of smoke, like a true badass ninja.")
         else:
             output.append(f"{self.getName()}'s smoke bomb threw out a cloud of smoke, but {self.getName()} was not stealthy enough to hide in it and enters a coughing fit.")
@@ -248,9 +248,10 @@ class Ninja(Character):
             self.setExposedStatus(True, self.getExposedStatus()[1] - 1)
             output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
 
-        if self.getConcealedStatus():
+        if self.getConcealedStatus() >0:
+            self.setConcealedStatus(self.getConcealedStatus()-1)
+        else:
             output.append(f"The smoke cloud dissipates, leaving {self.getName()} in the open again.")
-            self.setConcealedStatus(False)
 
         if self.getCursedStatus()["status"]:
             self.setCurseTimer(self.getCurseTimer() + 1)
@@ -269,4 +270,6 @@ class Ninja(Character):
 
         return output
 
-    #skill point allocation
+    def battle_end(self):
+        self.setCursedStatus(False, None, None)
+        self.setDodgeChance(self.getDodgeChance/2 - 10)

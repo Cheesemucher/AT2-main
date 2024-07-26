@@ -28,11 +28,11 @@ class SkillPointsAllocator:
         self.__stats = []
         self.__buttons = []
         self.__attribute_upgrades = {
-            "Strength": lambda: self.__character.setStrength(self.__character.getStrength() + 2), # lambda is used here only to prevent python from checking whether the character has a certain function until it is called,
-            "Max Stamina": lambda: self.__character.setMaxStamina(self.__character.getMaxStamina() + 2), # this is necessary as not all characters have all the funcions within this dictionary.
+            "Strength": lambda: self.__character.setStrength(self.__character.getStrength() + 5), # lambda is used here only to prevent python from checking whether the character has a certain function until it is called,
+            "Max Stamina": lambda: self.__character.setMaxStamina(self.__character.getMaxStamina() + 10), # this is necessary as not all characters have all the funcions within this dictionary.
             "Max Mana": lambda: self.__character.setMaxMana(self.__character.getMaxMana() + 10),
             "Max HP": lambda: self.__character.setMaxHP(self.__character.getMaxHP() + 10),
-            "Magic Power": lambda: self.__character.setMagicPower(self.__character.getMagicPower() + 2),
+            "Magic Power": lambda: self.__character.setMagicPower(self.__character.getMagicPower() + 5),
             "Magic Resistance Multiplier": lambda: self.__character.setMagicResistance(self.__character.getMagicResistance() - 0.02),
             "Defense Multiplier": lambda: self.__character.setDefenseMultiplier(self.__character.getDefenseMultiplier() - 0.02),
         }

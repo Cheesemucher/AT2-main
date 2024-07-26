@@ -16,7 +16,7 @@ class Warrior(Character):
         super().__init__(name, "Warrior", 60, 80, window)
         self.__maxStamina = 100
         self.__currentStamina = self.__maxStamina
-        self.__staminaRegeneration = 10
+        self.__staminaRegeneration = 30
         self.__strength = 50
         self.__defensiveStance = False
         self.__player_health_bar = Bar(window, self, (10,10), "HP") # Make a bar object to track players health
@@ -41,13 +41,13 @@ class Warrior(Character):
 
     # Accessors
     def getMaxStamina(self):
-        return self.__maxStamina + (2 * self.getLevel())
+        return self.__maxStamina
 
     def getCurrentStamina(self):
         return self.__currentStamina
 
     def getStaminaRegeneration(self):
-        return self.__staminaRegeneration
+        return self.__staminaRegeneration + (2 * self.getLevel())
 
     def getStrength(self):
         return self.__strength
