@@ -84,12 +84,12 @@ class Game:
         while True:
             if self.__state == 'menu':  # If the state is 'menu'
                 result = self.__menu.run()  # Run the menu and get the result
-                self.__current_stage = 4
+                self.__current_stage = 3
                 self.__game_maps = [ # Resets the list of map classes since they will have been changed from the previous playthrough.
             Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 2), Skeleton([self.__window.get_width() - 120, 50], self.__window, 3)]), 
             Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 3 + i) for i in range(3)]),
             Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 5) for i in range(8)]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), [EvilSorceror([self.__window.get_width()/2,self.__window.get_height()/2]), self.__window, 10]),
+            Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), [EvilSorceror((self.__window.get_width()/2,self.__window.get_height()/2),self.__window, 10)]),
             Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 10) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
             ]
                 if result == 'Start Game':  # If the result is 'Start Game'

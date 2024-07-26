@@ -69,7 +69,7 @@ class Ninja(Character):
         return self.__concealed
     
     def getStats(self):
-        self.__stats = { # Update all stat values            
+        self.__stats = {
             "Stamina Regen Rate": self.getStaminaRegeneration(),
             "Strength":self.getStrength(),
             "Max Stamina":self.getMaxStamina(),
@@ -77,7 +77,8 @@ class Ninja(Character):
             "Max HP":self.getMaxHP(),
             "Current HP": self.getCurrentHP(),
             "Defense Multiplier": self.getDefenseMultiplier(),
-            "Magic Resistance Multiplier": self.getMagicResistance()
+            "Magic Resistance Multiplier": self.getMagicResistance(),
+            "Dodge Chance": self.getDodgeChance(),
         }
 
         return self.__stats

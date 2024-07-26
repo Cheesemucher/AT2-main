@@ -96,6 +96,18 @@ class Combat:
 
         while player.isAlive() and enemy.isAlive():  # Repeats combat loop until either party dies
 
+            if hasattr(enemy, 'boss'): # Check if enemy has the boss flag, they get the first turn if they do.
+                output = enemy.attack(player)  # Enemy takes action
+                self.__console_writer.display_output(output) # Enemy action's outputs are displayed
+                pygame.display.flip()
+                self.seek_acknowledgement()
+
+                output = enemy.upkeepPhase()  # Counts a turn to have passed for enemy, triggering all regeneration and ticking up all status effect timers
+                self.__console_writer.display_output(output)
+                pygame.display.flip()
+                self.seek_acknowledgement()
+
+
             chosen_attack = self.choose_attack() # Allows player to enter a key input to choose a certain attack
             if chosen_attack == 'menu': # Check if player chose to leave
                 return 'menu'
@@ -134,9 +146,6 @@ class Combat:
             
             self.seek_acknowledgement()
 
-            self.__window.fill((0, 0, 0))  # Clear the console again for player's turn
-            self.draw_arena()  # Draw the arena again
-
             while not player.isAlive():
                 self.__window.blit(pygame.transform.scale(pygame.image.load(GAME_ASSETS["lose_screen"]).convert_alpha(), (800,600)), (0, 0))
                 pygame.display.flip()
@@ -150,6 +159,7 @@ class Combat:
                 output = enemy.upkeepPhase()  # Counts a turn to have passed for enemy, triggering all regeneration and ticking up all status effect timers
                 self.__console_writer.display_output(output)
                 pygame.display.flip()
+                self.seek_acknowledgement()
 
             
 
@@ -165,7 +175,7 @@ class Combat:
         pygame.draw.rect(window,(180,180,180,180),(window.get_width()*4/5,60,window.get_width()/5,window.get_height())) # Enemy side bar
         
         #player information
-        self.__player.listAttacks(window, pygame.Rect(8, 200, window.get_width()/5, 200), 16)
+        self.__player.listAttacks(window, pygame.Rect(8, 300, window.get_width()/5 - 10, 200), 16) # Lists all player attacks in the specific pygame.Rect area
         player_stat_writer = TextRenderer(window, pygame.Rect(8, 80, window.get_width()/5, 200), 16) # Creates an instance of text renderer to write stats in the stat area
         stat_list = []
         for stat, value in self.__player.getStats().items():
@@ -176,13 +186,15 @@ class Combat:
 
         #enemy information
         self.__enemy.getEnemyHealthBar().update_quantity()
+        if hasattr(self.__enemy, 'boss'): # Check if enemy has the boss flag for mana bar
+            self.__enemy.getBossManaBar().update_quantity()
 
         pygame.display.flip() #update the display
         stat_list = []
         for stat, value in self.__enemy.getStats().items():
             stat_list.append(f"{stat}: {value}")
-            player_stat_writer = TextRenderer(window, pygame.Rect(window.get_width()*4/5 + 8, 80, window.get_width()/5, 200), 16)
-        player_stat_writer.display_output(stat_list)
+            enemy_stat_writer = TextRenderer(window, pygame.Rect(window.get_width()*4/5 + 8, 80, window.get_width()/5, 200), 16)
+        enemy_stat_writer.display_output(stat_list)
 
     def choose_attack(self):
         chosen_attack = None

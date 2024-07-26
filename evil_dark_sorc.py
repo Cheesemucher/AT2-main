@@ -42,7 +42,7 @@ class EvilSorceror(Enemy):
                 maxHP += 5
             points -= 1
             
-        super().__init__("Dark and Evil Sorceror Bob", GAME_ASSETS['sorceror'], position, window, defenseMultiplier, magicResistanceMultiplier, None, magicPower, maxHP, level)
+        super().__init__("Dark and Evil Sorceror Bob", GAME_ASSETS['sorceror'], position, window, defenseMultiplier, magicResistanceMultiplier, 80, magicPower, maxHP, level)
         self.setImage(pygame.transform.scale(self.getImage(), [90, 70]))
         self.__attackList = {
             "Magic Shield": self.magic_shield,
@@ -56,6 +56,7 @@ class EvilSorceror(Enemy):
         self.__cheeseCounter = 0
         self.__XpValue = 1000
         self.__boss_mana_bar = Bar(window, self, (3/4 * window.get_width() - 10,40), "Mana") # Make a bar object to track boss mana
+        self.__currentMana = self.getMaxMana()
     
 
     #accessors
@@ -80,7 +81,7 @@ class EvilSorceror(Enemy):
     def getCurrentMana(self):
         return self.__currentMana
 
-    def getBossmanabar(self):
+    def getBossManaBar(self):
         return self.__boss_mana_bar
 
     def getBoss(self):
@@ -109,7 +110,7 @@ class EvilSorceror(Enemy):
     def setCurrentMana(self, newCurrentMana):
         self.__currentMana = newCurrentMana
 
-    def setBossmanabar(self, newBossmanabar):
+    def setBossManaBar(self, newBossmanabar):
         self.__boss_mana_bar = newBossmanabar
 
     def setBoss(self, newBoss):
@@ -127,11 +128,11 @@ class EvilSorceror(Enemy):
         # Boss Attack pattern logic
         if not self.__shieldStatus[0] and attackRNG <90: # Add some chance just for the fun of it
             selected_attack = "Magic Shield"
-        elif self.__currentHP < self.__maxHP/2 and attackRNG <= 80:
+        elif self.getCurrentHP() < self.getMaxHP()/2 and attackRNG <= 80:
             selected_attack = "Unfair turn cheat"
-        elif self.__currentMana < self.__maxMana/2 and attackRNG <= 20:
+        elif self.getCurrentMana() < self.getMaxMana()/2 and attackRNG <= 20:
             selected_attack = "Unfair mana cheat"
-        elif self.__currentHP == 1 and self.__previousAttack != "Unfair turn cheat" and self.__previousAttack != "Magic Shield": # Don't make the heal rng based
+        elif self.getCurrentHP() == 1 and self.__previousAttack != "Unfair turn cheat" and self.__previousAttack != "Magic Shield": # Don't make the heal rng based
             selected_attack = "Unfair HP cheat"
         elif attackRNG < 50:
             selected_attack = "Magic Nuclear Arsenal"
@@ -163,13 +164,13 @@ class EvilSorceror(Enemy):
     def mana_cheat(self, player):
         output = []
         output.append(f"{self.getName()} casts an Unfair Mana Cheat with his dark magic, cheating his mana to full")
-        self.__currentMana = self.__maxMana
+        self.setCurrentMana(self.getMaxMana())
         return output
     
     def HP_cheat(self, player):
         output = []
         output.append(f"{self.getName()} casts an Unfair HP Cheat with his dark magic, cheating his HP to full")
-        self.__currentHP = self.__maxHP
+        self.setCurrentHP(self.getMaxHP())
         return output
     
     def magic_nuclear_arsenal(self, player):
@@ -186,7 +187,7 @@ class EvilSorceror(Enemy):
         self.__cheeseCounter += 1
         output.append(f"{self.getName()} now has {self.__cheeseCounter} cheese wheels in his presence.")
 
-        if self.__cheeseCounter >= 3 and self.getCurrentHP() <= self.__maxHP/2 + 10*self.__cheeseCounter:
+        if self.__cheeseCounter >= 3 and self.getCurrentHP() <= self.getMaxHP()/2 + 10*self.__cheeseCounter:
             output.append(f"The cheese wheels unite in the dreams and aspirations of {self.getName()}, manifesting the true form of The Cheese God itself.")
             damage = 999999999999999
             output.append(f"You look ready for a fight but The Cheese God is too overwhelming in its power, its mere presence erasing your very existence with {damage} damage.")
@@ -200,9 +201,9 @@ class EvilSorceror(Enemy):
         if self.__shieldStatus[0]:
             damage = damage * 0.1
             output.append(f"Magic shield blocked 90% of incoming damage, reducing damage to {damage}.")
-            if self.__currentHP - damage <= 0 and self.__currentHP > 1: # Check for fatal damage and whether the last attack also cheated fatal damage
-                self.__currentHP = damage + 1 # Makes sure the boss survives a fatal hit if the conditions are met
-                output.append(f"Since the incoming damage was still fatal, {self.__name} had to rely on the magic barrier to cheat death.")
+            if self.getCurrentHP() - damage <= 0 and self.getCurrentHP() > 1: # Check for fatal damage and whether the last attack also cheated fatal damage
+                self.setCurrentHP(damage + 1) # Makes sure the boss survives a fatal hit if the conditions are met
+                output.append(f"Since the incoming damage was still fatal, {self.getName()} had to rely on the magic barrier to cheat death.")
             output.append
 
         self.setCurrentHP(self.getCurrentHP() - damage)
@@ -210,19 +211,18 @@ class EvilSorceror(Enemy):
         return output
     
     def upkeepPhase(self): # Gets an upkeep since its a boss
-        output = ["End of turn: "]
+        output = ["End of enemy turn: "]
 
-        self.setCurrentMana(min(self.__maxMana, self.__currentMana + self.__manaRegen))
-        output.append(f"{self.getName()} has regenerated {self.__manaRegen} mana.")
+        self.setCurrentMana(min(self.__maxMana, self.__currentMana + 20))
+        output.append(f"{self.getName()} has regenerated 20 mana. (not that he needed it)")
         
         if self.__shieldStatus[1] == 0:
             self.__shieldStatus = False, None  # stops being exposed upon next turn
             output.append(f"{self.getName()} is no longer shielded!")
         elif self.__shieldStatus[1]:
             self.__shieldStatus = True, self.__shieldStatus[1] - 1
-            output.append(f"{self.getName()} remains exposed for another {self.getExposedStatus()[1]} turns.")
+            output.append(f"{self.getName()}'s shield falters in {self.__shieldStatus[1]} turns.")
 
-        
 
         return output
 
