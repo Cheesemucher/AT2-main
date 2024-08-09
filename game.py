@@ -31,60 +31,17 @@ class Game:
             Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 2), Skeleton([self.__window.get_width() - 120, 50], self.__window, 3)]), 
             Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 3 + i) for i in range(3)]),
             Map(self.__window, pygame.image.load(GAME_ASSETS["graveyard_map"]).convert_alpha(), [Skeleton(None, self.__window, 5) for i in range(8)]),
-            Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), EvilSorceror([self.__window.get_width()/2,self.__window.get_height()/2], self.__window, 10)),
+            #Map(self.__window, pygame.image.load(GAME_ASSETS["epic_map"]).convert_alpha(), EvilSorceror([self.__window.get_width()/2,self.__window.get_height()/2], self.__window, 10)),
             Map(self.__window, pygame.image.load(GAME_ASSETS["forest_map"]).convert_alpha(), [Skeleton(None, self.__window, 10) for i in range(6)] + [Wraith(None, self.__window, 15 + i) for i in range(3)]),
         ]
-    
-    # Accessors
-    def get_window(self):
-        return self.__window
 
-    def get_menu(self):
-        return self.__menu
-
-    def get_character_select(self):
-        return self.__character_select
-
-    def get_game_maps(self):
-        return self.__game_maps
-
-    def get_state(self):
-        return self.__state
-
-    def get_current_character(self):
-        return self.__current_character
-    
-    def get_current_stage(self):
-        return self.__current_stage
-
-    # Mutators
-    def set_window(self, new_window):
-        self.__window = new_window
-
-    def set_menu(self, new_menu):
-        self.__menu = new_menu
-
-    def set_character_select(self, new_character_select):
-        self.__character_select = new_character_select
-
-    def set_game_maps(self, new_game_maps):
-        self.__game_maps = new_game_maps
-
-    def set_state(self, new_state):
-        self.__state = new_state
-
-    def set_current_character(self, new_current_character):
-        self.__current_character = new_current_character
-
-    def set_current_stage(self, new_current_stage):
-        self.__current_stage = new_current_stage
     
     # Run game function
     def run(self):
         while True:
             if self.__state == 'menu':  # If the state is 'menu'
                 result = self.__menu.run()  # Run the menu and get the result
-                self.__current_stage = 3
+                self.__current_stage = 0
                 self.__game_maps = [ # Resets the list of map classes since they will have been changed from the previous playthrough.
             Map(self.__window, pygame.image.load(GAME_ASSETS["dungeon_map"]).convert_alpha(), [Goblin([50, 50], self.__window, 2), Skeleton([self.__window.get_width() - 120, 50], self.__window, 3)]), 
             Map(self.__window, pygame.image.load(GAME_ASSETS["torture_map"]).convert_alpha(), [Wraith(None, self.__window, 3 + i) for i in range(3)]),
